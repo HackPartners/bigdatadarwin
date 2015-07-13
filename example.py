@@ -1,4 +1,4 @@
-from darwinpush.client import Client
+from darwinpush import Client
 
 import os
 
