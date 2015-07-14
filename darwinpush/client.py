@@ -1,4 +1,4 @@
-from darwinpush.messages import ScheduleMessage
+from darwinpush.messages import DeactivatedMessage, ScheduleMessage
 
 from stomp.connect import StompConnection12
 
@@ -6,6 +6,7 @@ import pyxb.utils.domutils as domutils
 
 import darwinpush.xb.pushport as pp
 
+import threading
 import sys
 import time
 import zlib
@@ -30,13 +31,26 @@ class Client:
         self.stomp_user = stomp_user
         self.stomp_password = stomp_password
         self.stomp_queue = stomp_queue
+        self.listeners = {}
 
     def connect(self):
-        self._connect()
+        self.connected = True
+        self._run()
+
+    def register_listener(self, name, listener):
+        self.listeners[name] = listener
+
+    def _run(self):
+        self.thread = threading.Thread(target=self._connect)
+        self.thread.daemon = True
+        self.thread.start()
 
     def _connect(self):
         self.client = StompClient()
         self.client.connect(self.stomp_user, self.stomp_password, self.stomp_queue, self)
+
+        while self.connected:
+            time.sleep(1)
 
     def _on_message(self, headers, message):
 
@@ -67,6 +81,7 @@ class Client:
         # Process DEACTIVATED messages.
         for i in r.deactivated:
             log.debug("DEACTIVATED message received.")
+            self._emit_processed_message(DeactivatedMessage(i))
 
         # Process ASSOCATION messages.
         for i in r.association:
@@ -100,8 +115,8 @@ class Client:
         print("Error: %s, %s" % (headers, message))
 
     def _emit_processed_message(self, message):
-        print("TODO: Emit the message.")
-        pass
+        for name, listener in self.listeners.items():
+            listener.queue.put(message)
 
     def run(self):
         while 1:

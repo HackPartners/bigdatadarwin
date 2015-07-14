@@ -1,7 +1,6 @@
-class ScheduleMessage:
+from darwinpush.messages.BaseMessage import BaseMessage
 
-    def __init__(self, raw):
-        self.raw = raw
+class ScheduleMessage(BaseMessage):
 
     """
     The 2-letter TOC code for the train operating company of this service.

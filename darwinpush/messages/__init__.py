@@ -1,0 +1,2 @@
+from darwinpush.messages.DeactivatedMessage import DeactivatedMessage
+from darwinpush.messages.ScheduleMessage import ScheduleMessage
