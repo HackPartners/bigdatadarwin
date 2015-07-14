@@ -1,4 +1,4 @@
-from darwinpush.messages import DeactivatedMessage, ScheduleMessage
+from darwinpush.messages import *
 
 from stomp.connect import StompConnection12
 
@@ -86,30 +86,37 @@ class Client:
         # Process ASSOCATION messages.
         for i in r.association:
             log.debug("ASSOCIATION message received.")
+            self._emit_processed_message(AssociationMessage(i))
 
         # Process TS messages.
         for i in r.TS:
             log.debug("TS message received.")
+            self._emit_processed_message(TrainStatusMessage(i))
 
         # Process OW messages.
         for i in r.OW:
             log.debug("OW message received.")
+            self._emit_processed_message(StationMessage(i))
 
         # Process TRAINALERT messages.
         for i in r.trainAlert:
             log.debug("TRAINALERT message received.")
+            self._emit_processed_message(TrainAlertMessage(i))
 
         # Process TRAINORDER messages.
         for i in r.trainOrder:
             log.deug("TRAINORDER message received.")
+            self._emit_processed_message(TrainOrderMessage(i))
 
         # Process TRACKINGID messages.
         for i in r.trackingID:
             log.debug("TRACKINGID message received.")
+            self._emit_processed_message(TrackingIdMessage(i))
 
         # Process ALARM messages.
         for i in r.alarm:
             log.debug("ALARM message received.")
+            self._emit_processed_message(AlarmMessage(i))
 
     def _on_error(self, headers, message):
         print("Error: %s, %s" % (headers, message))
