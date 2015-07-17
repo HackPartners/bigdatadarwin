@@ -1,5 +1,106 @@
 from darwinpush.messages.BaseMessage import BaseMessage
 
+class ScheduleLocation:
+
+    def __init__(self, raw):
+        self.raw = raw
+
+    @property
+    def tiploc(self):
+        return self.raw.tpl
+
+    @property
+    def activity_codes(self):
+        return self.raw.act
+
+    @property
+    def planned_activity_codes(self):
+        return self.raw.planAct
+
+    @property
+    def cancelled(self):
+        return self.raw.can
+
+    @property
+    def false_tiploc(self):
+        return self.raw.fd
+
+    """
+    A delay value that is implied by a change to the service's route. This value has been added to
+    the forecast lateness of the service at the previous schedule location when calculating the
+    expected lateness of arrival at this location.
+    """
+    @property
+    def route_delay(self):
+        try:
+            return self.raw.rdelay
+        except AttributeError:
+            return None
+
+    @property
+    def working_arrival_time(self):
+        try:
+            return self.raw.wta
+        except AttributeError:
+            return None
+
+    @property
+    def public_arrival_time(self):
+        try:
+            return self.raw.pta
+        except AttributeError:
+            return None
+
+    @property
+    def working_departure_time(self):
+        try:
+            return self.raw.wtd
+        except AttributeError:
+            return None
+
+    @property
+    def public_departure_time(self):
+        try:
+            return self.raw.ptd
+        except AttributeError:
+            return None
+
+    @property
+    def working_pass_time(self):
+        try:
+            return self.raw.wtp
+        except AttributeError:
+            return None
+
+
+class Origin(ScheduleLocation):
+    pass
+
+
+class OperationalOrigin(ScheduleLocation):
+    pass
+
+
+class IntermediatePoint(ScheduleLocation):
+    pass
+
+
+class OperationalIntermediatePoint(ScheduleLocation):
+    pass
+
+
+class PassingPoint(ScheduleLocation):
+    pass
+
+
+class Destination(ScheduleLocation):
+    pass
+
+
+class OperationalDestination(ScheduleLocation):
+    pass
+
+
 class ScheduleMessage(BaseMessage):
 
     """
@@ -85,5 +186,54 @@ class ScheduleMessage(BaseMessage):
     @property
     def cancel_reason(self):
         return self.raw.cancelReason
+
+    """
+    Returns a list of the service origins. There can be more than one.
+    """
+    @property
+    def origins(self):
+        return [Origin(OR) for OR in self.raw.OR]
+
+    """
+    Returns a list of the serviec operational origins. There can be more than one.
+    """
+    @property
+    def operational_origins(self):
+        return [OperationalOrigin(OPOR) for OPOR in self.raw.OPOR]
+
+    """
+    Returns a list of the intermediate locations on the service.
+    """
+    @property
+    def intermediate_points(self):
+        return [IntermediatePoint(IP) for IP in self.raw.IP]
+
+    """
+    Returns a list of the operational intermediate locations on the service.
+    """
+    @property
+    def operational_intermediate_points(self):
+        return [OperationalIntermediatePoint(OPIP) for OPIP in self.raw.OPIP]
+
+    """
+    Returns a list of the passing points on the service.
+    """
+    @property
+    def passing_points(self):
+        return [PassingPoint(PP) for PP in self.raw.PP]
+
+    """
+    Returns a list of the service destinations. There can be more than one.
+    """
+    @property
+    def destinations(self):
+        return [Destination(DT) for DT in self.raw.DT]
+
+    """
+    Returns a list of the operational destinations. There can be more than one.
+    """
+    @property
+    def operational_destinations(self):
+        return [OperationalDestination(OPDT) for OPDT in self.raw.OPDT]
 
 
