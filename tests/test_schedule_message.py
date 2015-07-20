@@ -47,9 +47,9 @@ class TestScheduleMessage:
         assert(len(m.destinations) == 1)
         assert(len(m.operational_destinations) == 0)
 
-        for a in m.raw.orderedContent():
-            print(a.value)
-            print(dir(a))
+        #for a in m.raw.orderedContent():
+        #    print(a.value)
+        #    print(dir(a))
 
         # Check the child elemnt basic attributes of the list properties.
         i = m.origins[0]
