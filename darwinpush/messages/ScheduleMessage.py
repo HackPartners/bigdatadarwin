@@ -103,6 +103,31 @@ class OperationalDestination(ScheduleLocation):
 
 class ScheduleMessage(BaseMessage):
 
+    def __init__(self, message):
+        super().__init__(message)
+        self.point_lists_built = False
+
+    def _build_point_lists(self):
+        # Loop through all the points in the order they appear in the XML, instantiate the
+        # appropriate object for them, and add them to the appropriate list.a
+
+        self._origins = []
+        self._operational_origins = []
+        self._intermediate_points = []
+        self._operational_intermediate_points = []
+        self.passing_points = []
+        self.destinations = []
+        self.operational_destinations = []
+        self.all_calling_points = []
+
+
+        day_incrementer = 0
+        for r in self.raw.orderedContent():
+            
+        
+        self.point_lists_built = True
+
+
     """
     The train UID.
     """
@@ -129,7 +154,7 @@ class ScheduleMessage(BaseMessage):
     """
     @property
     def schedule_start_date(self):
-        return self.raw.ssd
+        return self.raw.ssd.date()
     
     """
     The 2-letter TOC code for the train operating company of this service.
