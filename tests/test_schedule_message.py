@@ -4,6 +4,7 @@ sys.path.append(os.getcwd())
 
 import datetime
 import pytest
+import pytz
 
 import darwinpush.xb.pushport as pp
 from darwinpush.messages import ScheduleMessage
@@ -47,10 +48,6 @@ class TestScheduleMessage:
         assert(len(m.destinations) == 1)
         assert(len(m.operational_destinations) == 0)
 
-        #for a in m.raw.orderedContent():
-        #    print(a.value)
-        #    print(dir(a))
-
         # Check the child elemnt basic attributes of the list properties.
         i = m.origins[0]
         assert(i.tiploc == "THBDGS")
@@ -59,7 +56,13 @@ class TestScheduleMessage:
         assert(i.cancelled == False)
         assert(i.false_tiploc is None)
         assert(i.route_delay is None)
-        assert(i.public_departure_time == datetime.time(13, 44))
-        assert(i.working_departure_time == datetime.time(17, 2))
+
+        # 13:44 Local Time
+        assert(i.public_departure_time == pytz.utc.localize(datetime.datetime(2015, 7, 20, 14, 44)))
+        assert(i.working_departure_time == pytz.utc.localize(datetime.datetime(2015, 7, 20, 14, 44)))
+
+        assert(i.public_arrival_time is None)
+        assert(i.working_arrival_time is None)
+        assert(i.working_pass_time is None)
 
 

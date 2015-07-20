@@ -1,9 +1,87 @@
 from darwinpush.messages.BaseMessage import BaseMessage
+from darwinpush.utils import timezone_for_date_and_time
+from darwinpush.xb.raw.sch import OR, OPOR, IP, OPIP, PP, DT, OPDT
+from darwinpush.xb.raw.ct import DisruptionReasonType
+
+from datetime import datetime, timedelta
+from dateutil.parser import *
+import pytz
 
 class ScheduleLocation:
 
     def __init__(self, raw):
         self.raw = raw
+
+    def _build_times(self, day_incrementor, last_location, start_date, tz):
+ 
+        # Construct all the date/time objects iteratively, checking for back-in-time movement of
+        # any of them.
+        last_time = None
+        if last_location is not None:
+            last_time = last_location._get_last_time()
+
+        if self.raw_working_arrival_time is not None:
+            t = parse(self.raw_working_arrival_time).time()
+            if last_time is not None:
+                if last_time > t:
+                    day_incrementor += 1
+            d = start_date + timedelta(days=day_incrementor)
+            self._working_arrival_time = tz.localize(datetime.combine(d, t)).astimezone(pytz.utc)
+
+        if self.raw_public_arrival_time is not None:
+            t = parse(self.raw_public_arrival_time).time()
+            if last_time is not None:
+                if last_time > t:
+                    day_incrementor += 1
+            d = start_date + timedelta(days=day_incrementor)
+            self._public_arrival_time = tz.localize(datetime.combine(d, t)).astimezone(pytz.utc)
+
+        if self.raw_working_pass_time is not None:
+            t = parse(self.raw_working_pass_time).time()
+            if last_time is not None:
+                if last_time > t:
+                    day_incrementor += 1
+            d = start_date + timedelta(days=day_incrementor)
+            self._working_pass_time = tz.localize(datetime.combine(d, t)).astimezone(pytz.utc)
+
+        if self.raw_public_departure_time is not None:
+            t = parse(self.raw_public_departure_time).time()
+            if last_time is not None:
+                if last_time > t:
+                    day_incrementor += 1
+            d = start_date + timedelta(days=day_incrementor)
+            self._public_departure_time = tz.localize(datetime.combine(d, t)).astimezone(pytz.utc)
+
+        if self.raw_working_departure_time is not None:
+            t = parse(self.raw_working_departure_time).time()
+            if last_time is not None:
+                if last_time > t:
+                    day_incrementor += 1
+            d = start_date + timedelta(days=day_incrementor)
+            self._working_departure_time = tz.localize(datetime.combine(d, t)).astimezone(pytz.utc)
+
+        # Return the new day_incrementor value.
+        return day_incrementor
+
+    def _get_first_time(self):
+        if self.raw_working_arrival_time is not None:
+            return parse(self.raw_working_arrival_time).time()
+        elif self.raw_working_pass_time is not None:
+            return parse(self.raw_working_pass_time).time()
+        elif self.raw_working_departure_time is not None:
+            return parse(self.raw_working_departure_time).time()
+        else:
+            raise Exception()
+
+    def _get_last_time(self):
+        if self.working_departure_time is not None:
+            return self.working_departure_time.time()
+        elif self.working_pass_time is not None:
+            return self.working_pass_time.time()
+        elif self.working_arrival_time is not None:
+            return self.working_arrival_time.time()
+        else:
+            raise Exception()
 
     @property
     def tiploc(self):
@@ -38,37 +116,72 @@ class ScheduleLocation:
             return None
 
     @property
-    def working_arrival_time(self):
+    def raw_working_arrival_time(self):
         try:
             return self.raw.wta
         except AttributeError:
             return None
 
     @property
-    def public_arrival_time(self):
+    def raw_public_arrival_time(self):
         try:
             return self.raw.pta
         except AttributeError:
             return None
 
     @property
-    def working_departure_time(self):
+    def raw_working_departure_time(self):
         try:
             return self.raw.wtd
         except AttributeError:
             return None
 
     @property
-    def public_departure_time(self):
+    def raw_public_departure_time(self):
         try:
             return self.raw.ptd
         except AttributeError:
             return None
 
     @property
-    def working_pass_time(self):
+    def raw_working_pass_time(self):
         try:
             return self.raw.wtp
+        except AttributeError:
+            return None
+    
+    @property
+    def working_arrival_time(self):
+        try:
+            return self._working_arrival_time
+        except AttributeError:
+            return None
+
+    @property
+    def public_arrival_time(self):
+        try:
+            return self._public_arrival_time
+        except AttributeError:
+            return None
+
+    @property
+    def working_departure_time(self):
+        try:
+            return self._working_departure_time
+        except AttributeError:
+            return None
+
+    @property
+    def public_departure_time(self):
+        try:
+            return self._public_departure_time
+        except AttributeError:
+            return None
+
+    @property
+    def working_pass_time(self):
+        try:
+            return self._working_pass_time
         except AttributeError:
             return None
 
@@ -100,33 +213,72 @@ class Destination(ScheduleLocation):
 class OperationalDestination(ScheduleLocation):
     pass
 
-
 class ScheduleMessage(BaseMessage):
 
     def __init__(self, message):
         super().__init__(message)
-        self.point_lists_built = False
+        self._build_point_lists()
 
     def _build_point_lists(self):
         # Loop through all the points in the order they appear in the XML, instantiate the
-        # appropriate object for them, and add them to the appropriate list.a
+        # appropriate object for them, and add them to the appropriate list.
 
         self._origins = []
         self._operational_origins = []
         self._intermediate_points = []
         self._operational_intermediate_points = []
-        self.passing_points = []
-        self.destinations = []
-        self.operational_destinations = []
-        self.all_calling_points = []
+        self._passing_points = []
+        self._destinations = []
+        self._operational_destinations = []
+        self._all_points = []
 
-
-        day_incrementer = 0
         for r in self.raw.orderedContent():
-            
-        
-        self.point_lists_built = True
+            v = r.value
+            if type(v) == DisruptionReasonType:
+                pass
+            elif type(v) == OR:
+                p = Origin(v)
+                self._origins.append(p)
+            elif type(v) == OPOR:
+                p = OperationalOrigin(v)
+                self._operational_origins.append(p)
+            elif type(v) == IP:
+                p = IntermediatePoint(v)
+                self._intermediate_points.append(p)
+            elif type(v) == OPIP:
+                p = OperationalIntermediatePoint(v)
+                self._operational_intermediate_points.append(p)
+            elif type(v) == PP:
+                p = PassingPoint(v)
+                self._passing_points.append(p)
+            elif type(v) == DT:
+                p = Destination(v)
+                self._destinations.append(p)
+            elif type(v) == OPDT:
+                p = OperationalDestination(v)
+                self._operational_destinations.append(p)
+            else:
+                raise Exception("Type of point is {}.".format(type(v)))
 
+            self._all_points.append(p)
+
+        first_point = self._all_points[0]
+        if first_point.raw_working_arrival_time is not None:
+            t = parse(first_point.raw_working_arrival_time).time()
+        elif first_point.raw_working_pass_time is not None:
+            t = parse(first_point.raw_working_pass_time).time()
+        elif first_point.raw_working_departure_time is not None:
+            t = parse(first_point.raw_working_departure_time).time()
+        else:
+            raise Exception()
+
+        tz = timezone_for_date_and_time(self.schedule_start_date, t)
+
+        day_incrementor = 0
+        o = None
+        for p in self._all_points:
+            day_incrementor = p._build_times(day_incrementor, o, self.schedule_start_date, tz)
+            o = p
 
     """
     The train UID.
@@ -217,48 +369,48 @@ class ScheduleMessage(BaseMessage):
     """
     @property
     def origins(self):
-        return [Origin(OR) for OR in self.raw.OR]
+        return self._origins
 
     """
     Returns a list of the serviec operational origins. There can be more than one.
     """
     @property
     def operational_origins(self):
-        return [OperationalOrigin(OPOR) for OPOR in self.raw.OPOR]
+        return self._operational_origins
 
     """
     Returns a list of the intermediate locations on the service.
     """
     @property
     def intermediate_points(self):
-        return [IntermediatePoint(IP) for IP in self.raw.IP]
+        return self._intermediate_points
 
     """
     Returns a list of the operational intermediate locations on the service.
     """
     @property
     def operational_intermediate_points(self):
-        return [OperationalIntermediatePoint(OPIP) for OPIP in self.raw.OPIP]
+        return self._operational_intermediate_points
 
     """
     Returns a list of the passing points on the service.
     """
     @property
     def passing_points(self):
-        return [PassingPoint(PP) for PP in self.raw.PP]
+        return self._passing_points
 
     """
     Returns a list of the service destinations. There can be more than one.
     """
     @property
     def destinations(self):
-        return [Destination(DT) for DT in self.raw.DT]
+        return self._destinations
 
     """
     Returns a list of the operational destinations. There can be more than one.
     """
     @property
     def operational_destinations(self):
-        return [OperationalDestination(OPDT) for OPDT in self.raw.OPDT]
+        return self._operational_destinations
 
 
