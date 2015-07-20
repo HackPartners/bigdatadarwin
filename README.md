@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/grundleborg/darwinpush.svg?branch=master)](https://travis-ci.org/grundleborg/darwinpush)
+
 # darwinpush
 
 A python library for the National Rail Enquiries Darwin Push Port API. The purpose of this library
