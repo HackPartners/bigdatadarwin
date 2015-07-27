@@ -6,6 +6,7 @@ import pyxb.utils.domutils as domutils
 
 import darwinpush.xb.pushport as pp
 
+import enum
 import threading
 import sys
 import time
@@ -22,6 +23,26 @@ log = logging.getLogger("darwinpush")
 #logging.getLogger().setLevel(logging.DEBUG)
 #LOGGER = logging.getLogger('stomp')
 #####
+
+class ErrorType(enum.Enum):
+
+    DecompressionError = 1
+    ParseError = 2
+
+
+class Error:
+    def __init__(self, error_type, message):
+        self._error_type = error_type
+        self._payload = payload
+
+    @property
+    def payload(self):
+        return self._payload
+
+    @property
+    def error_type(self):
+        return self._error_type
+
 
 def has_method(_class, _method):
     return callable(getattr(_class, _method, None))
@@ -166,6 +187,10 @@ class StompClient:
         if has_method(self.cb, "_on_disconnected"):
             self.cb._on_disconnected()
 
+    def on_local_error(self, error):
+        if has_method(self.cb, "_on_local_error"):
+            self.cb._on_local_error(error)
+
     def on_message(self, headers, message):
         log.debug("StompClient.onMessage(headers={}, body=<truncated>)".format(headers))
 
@@ -176,7 +201,9 @@ class StompClient:
                     self.cb._on_message(headers, decompressed_data)
                 except Exception as e:
                     log.exception("Exception occurred parsing DARWIN message: {}.".format(decompressed_data))
+                    self.on_local_error(Error(ErrorType.ParseError, decompressed_data))
             except Exception as e:
                 log.exception("Exception occurred decompressing the STOMP message.")
+                self.on_local_error(Error(ErrorType.DecompressionError, (headers, message)))
 
 
