@@ -170,7 +170,13 @@ class StompClient:
         log.debug("StompClient.onMessage(headers={}, body=<truncated>)".format(headers))
 
         if has_method(self.cb, "_on_message"):
-            decompressed_data = zlib.decompress(message, 16+zlib.MAX_WBITS)
-            self.cb._on_message(headers, decompressed_data)
+            try:
+                decompressed_data = zlib.decompress(message, 16+zlib.MAX_WBITS)
+                try:
+                    self.cb._on_message(headers, decompressed_data)
+                except Exception as e:
+                    log.exception("Exception occurred parsing DARWIN message: {}.".format(decompressed_data))
+            except Exception as e:
+                log.exception("Exception occurred decompressing the STOMP message.")
 
 
