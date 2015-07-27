@@ -157,7 +157,7 @@ class StompClient:
         
         self.cb = callback_object
 
-        self.conn = StompConnection12([("datafeeds.nationalrail.co.uk", 61613)])
+        self.conn = StompConnection12([("datafeeds.nationalrail.co.uk", 61613)], auto_decode=False)
         self.conn.set_listener('', self)
         self.conn.start()
         self.conn.connect(user, password)

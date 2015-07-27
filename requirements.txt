@@ -1,5 +1,5 @@
 pyxb
-git+git://github.com/grundleborg/stomp.py@dont-utf8-decode
+stomp.py
 pytest
 pytz
 python-dateutil
