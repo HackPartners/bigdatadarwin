@@ -76,47 +76,47 @@ class Client:
         # Process SCHEDULE messages.
         for i in r.schedule:
             log.debug("SCHEDULE message received.")
-            self._emit_processed_message(ScheduleMessage(i))
+            self._emit_processed_message(ScheduleMessage(i, m))
 
         # Process DEACTIVATED messages.
         for i in r.deactivated:
             log.debug("DEACTIVATED message received.")
-            self._emit_processed_message(DeactivatedMessage(i))
+            self._emit_processed_message(DeactivatedMessage(i, m))
 
         # Process ASSOCATION messages.
         for i in r.association:
             log.debug("ASSOCIATION message received.")
-            self._emit_processed_message(AssociationMessage(i))
+            self._emit_processed_message(AssociationMessage(i, m))
 
         # Process TS messages.
         for i in r.TS:
             log.debug("TS message received.")
-            self._emit_processed_message(TrainStatusMessage(i))
+            self._emit_processed_message(TrainStatusMessage(i, m))
 
         # Process OW messages.
         for i in r.OW:
             log.debug("OW message received.")
-            self._emit_processed_message(StationMessage(i))
+            self._emit_processed_message(StationMessage(i, m))
 
         # Process TRAINALERT messages.
         for i in r.trainAlert:
             log.debug("TRAINALERT message received.")
-            self._emit_processed_message(TrainAlertMessage(i))
+            self._emit_processed_message(TrainAlertMessage(i, m))
 
         # Process TRAINORDER messages.
         for i in r.trainOrder:
             log.deug("TRAINORDER message received.")
-            self._emit_processed_message(TrainOrderMessage(i))
+            self._emit_processed_message(TrainOrderMessage(i, m))
 
         # Process TRACKINGID messages.
         for i in r.trackingID:
             log.debug("TRACKINGID message received.")
-            self._emit_processed_message(TrackingIdMessage(i))
+            self._emit_processed_message(TrackingIdMessage(i, m))
 
         # Process ALARM messages.
         for i in r.alarm:
             log.debug("ALARM message received.")
-            self._emit_processed_message(AlarmMessage(i))
+            self._emit_processed_message(AlarmMessage(i, m))
 
     def _on_error(self, headers, message):
         print("Error: %s, %s" % (headers, message))

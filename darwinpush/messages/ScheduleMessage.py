@@ -215,8 +215,8 @@ class OperationalDestination(ScheduleLocation):
 
 class ScheduleMessage(BaseMessage):
 
-    def __init__(self, message):
-        super().__init__(message)
+    def __init__(self, message, containing_message):
+        super().__init__(message, containing_message)
         self._build_point_lists()
 
     def _build_point_lists(self):

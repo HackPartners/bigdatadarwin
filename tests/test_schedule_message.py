@@ -18,7 +18,7 @@ class TestScheduleMessage:
             assert(r.uR is not None)
             assert(len(r.uR.schedule) == 1)
             
-            s = ScheduleMessage(r.uR.schedule[0])
+            s = ScheduleMessage(r.uR.schedule[0], r)
             return s
          
     def test_schedule_message(self):
