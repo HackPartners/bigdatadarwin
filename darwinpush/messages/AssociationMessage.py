@@ -22,7 +22,7 @@ class AssociationCategory(enum.Enum):
         if s == 'NP':
             return AssociationCategory.Next
         if s == 'LK':
-            return AssociationCateogry.Link
+            return AssociationCategory.Link
 
         raise UnknownAssociationCategoryError("Unknown AssociationCategory '{}' received in Association Message.".format(s))
 
