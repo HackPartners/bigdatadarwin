@@ -264,12 +264,12 @@ class ScheduleMessage(BaseMessage):
         else:
             raise Exception()
 
-        tz = timezone_for_date_and_time(self.schedule_start_date, t)
+        tz = timezone_for_date_and_time(self.start_date, t)
 
         day_incrementor = 0
         o = None
         for p in self._all_points:
-            day_incrementor = p._build_times(day_incrementor, o, self.schedule_start_date, tz)
+            day_incrementor = p._build_times(day_incrementor, o, self.start_date, tz)
             o = p
 
     """
@@ -297,7 +297,7 @@ class ScheduleMessage(BaseMessage):
     The schedule start date.
     """
     @property
-    def schedule_start_date(self):
+    def start_date(self):
         return self.raw.ssd.date()
     
     """

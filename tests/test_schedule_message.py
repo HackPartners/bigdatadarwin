@@ -29,7 +29,7 @@ class TestScheduleMessage:
         assert(m.uid == "L06990")
         assert(m.rid == "201507202885757")
         assert(m.headcode == "2W40")
-        assert(m.schedule_start_date == datetime.date(2015, 7, 20))
+        assert(m.start_date == datetime.date(2015, 7, 20))
         assert(m.toc_code == "TL")
         assert(m.passenger_service == True)
         assert(m.status == "P")
