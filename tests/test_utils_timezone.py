@@ -19,7 +19,7 @@ class TestUtcOffsetForDateAndTime:
         d = datetime.date(2015,6,5)
         t = datetime.time(21,00)
 
-        assert(timezone_for_date_and_time(d,t) == pytz.timezone("Etc/GMT+1"))
+        assert(timezone_for_date_and_time(d,t) == pytz.timezone("Etc/GMT-1"))
     
     def test_spring_forward(self):
         d = datetime.date(2015,3,29)
@@ -30,13 +30,13 @@ class TestUtcOffsetForDateAndTime:
         d = datetime.date(2015,3,29)
         t = datetime.time(2,5)
 
-        assert(timezone_for_date_and_time(d,t) == pytz.timezone("Etc/GMT+1"))
+        assert(timezone_for_date_and_time(d,t) == pytz.timezone("Etc/GMT-1"))
 
     def test_fall_back(self):
         d = datetime.date(2015,10,25)
         t = datetime.time(0,30)
 
-        assert(timezone_for_date_and_time(d,t) == pytz.timezone("Etc/GMT+1"))
+        assert(timezone_for_date_and_time(d,t) == pytz.timezone("Etc/GMT-1"))
 
         d = datetime.date(2015,10,25)
         t = datetime.time(1,15)

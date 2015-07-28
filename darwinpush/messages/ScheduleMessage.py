@@ -13,7 +13,6 @@ class ScheduleLocation:
         self.raw = raw
 
     def _build_times(self, day_incrementor, last_location, start_date, tz):
- 
         # Construct all the date/time objects iteratively, checking for back-in-time movement of
         # any of them.
         last_time = None
@@ -63,16 +62,6 @@ class ScheduleLocation:
         # Return the new day_incrementor value.
         return day_incrementor
 
-    def _get_first_time(self):
-        if self.raw_working_arrival_time is not None:
-            return parse(self.raw_working_arrival_time).time()
-        elif self.raw_working_pass_time is not None:
-            return parse(self.raw_working_pass_time).time()
-        elif self.raw_working_departure_time is not None:
-            return parse(self.raw_working_departure_time).time()
-        else:
-            raise Exception()
-
     def _get_last_time(self):
         if self.working_departure_time is not None:
             return self.working_departure_time.time()
@@ -101,7 +90,10 @@ class ScheduleLocation:
 
     @property
     def false_tiploc(self):
-        return self.raw.fd
+        try:
+            return self.raw.fd
+        except AttributeError:
+            return None
 
     """
     A delay value that is implied by a change to the service's route. This value has been added to

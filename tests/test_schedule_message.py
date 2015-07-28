@@ -48,7 +48,7 @@ class TestScheduleMessage:
         assert(len(m.destinations) == 1)
         assert(len(m.operational_destinations) == 0)
 
-        # Check the child elemnt basic attributes of the list properties.
+        # Check the properties of an origin.
         i = m.origins[0]
         assert(i.tiploc == "THBDGS")
         assert(i.activity_codes == "TB")
@@ -57,12 +57,55 @@ class TestScheduleMessage:
         assert(i.false_tiploc is None)
         assert(i.route_delay is None)
 
-        # 13:44 Local Time
-        assert(i.public_departure_time == pytz.utc.localize(datetime.datetime(2015, 7, 20, 14, 44)))
-        assert(i.working_departure_time == pytz.utc.localize(datetime.datetime(2015, 7, 20, 14, 44)))
-
-        assert(i.public_arrival_time is None)
         assert(i.working_arrival_time is None)
+        assert(i.public_arrival_time is None)
         assert(i.working_pass_time is None)
+        assert(i.public_departure_time == pytz.utc.localize(datetime.datetime(2015, 7, 20, 12, 44)))
+        assert(i.working_departure_time == pytz.utc.localize(datetime.datetime(2015, 7, 20, 12, 44)))
+
+        # Check the properties of a passing point.
+        i = m.passing_points[0]
+        assert(i.tiploc == "TNSLYGJ")
+        assert(i.activity_codes == "  ")
+        assert(i.planned_activity_codes is None)
+        assert(i.cancelled == False)
+        assert(i.false_tiploc is None)
+        assert(i.route_delay == 0)
+
+        assert(i.working_arrival_time is None)
+        assert(i.public_arrival_time is None)
+        assert(i.working_pass_time == pytz.utc.localize(datetime.datetime(2015, 7, 20, 12, 46, 20)))
+        assert(i.public_departure_time is None)
+        assert(i.working_departure_time is None)
+
+        # Check the properties of an intermediate point.
+        i = m.intermediate_points[0]
+        assert(i.tiploc == "GTWK")
+        assert(i.activity_codes == "T ")
+        assert(i.planned_activity_codes is None)
+        assert(i.cancelled == False)
+        assert(i.false_tiploc is None)
+        assert(i.route_delay == 0)
+
+        assert(i.working_arrival_time == pytz.utc.localize(datetime.datetime(2015, 7, 20, 12, 47, 30)))
+        assert(i.public_arrival_time == pytz.utc.localize(datetime.datetime(2015, 7, 20, 12, 48)))
+        assert(i.working_pass_time is None)
+        assert(i.public_departure_time == pytz.utc.localize(datetime.datetime(2015, 7, 20, 12, 49)))
+        assert(i.working_departure_time == pytz.utc.localize(datetime.datetime(2015, 7, 20, 12, 49)))
+
+        # Check the properties of a destination.
+        i = m.destinations[0]
+        assert(i.tiploc == "BEDFDM")
+        assert(i.activity_codes == "TF")
+        assert(i.planned_activity_codes is None)
+        assert(i.cancelled == False)
+        assert(i.false_tiploc is None)
+        assert(i.route_delay == 0)
+
+        assert(i.working_arrival_time == pytz.utc.localize(datetime.datetime(2015, 7, 20, 14, 49)))
+        assert(i.public_arrival_time == pytz.utc.localize(datetime.datetime(2015, 7, 20, 14, 49)))
+        assert(i.working_pass_time is None)
+        assert(i.public_departure_time is None)
+        assert(i.working_departure_time is None)
 
 
