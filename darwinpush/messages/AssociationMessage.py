@@ -1,5 +1,7 @@
 from darwinpush.messages.BaseMessage import BaseMessage
 
+from dateutil.parser import *
+
 import enum
 
 class UnknownAssociationCategoryError(Exception):
@@ -31,6 +33,31 @@ class AssociationService:
     
     def __init__(self, raw):
         self.raw = raw
+        
+        try:
+            self._working_arrival_time = parse(self.raw.wta).time()
+        except AttributeError:
+            self._working_arrival_time = None
+
+        try:
+            self._working_departure_time = parse(self.raw.wtd).time()
+        except AttributeError:
+            self._working_departure_time = None
+
+        try:
+            self._working_pass_time = parse(self.raw.wtp).time()
+        except AttributeError:
+            self._working_pass_time = None
+
+        try:
+            self._public_arrival_time = parse(self.raw.pta).time()
+        except AttributeError:
+            self._public_arrival_time = None
+        
+        try:
+            self._public_departure_time = parse(self.raw.ptd).time()
+        except AttributeError:
+            self._public_departure_time = None
 
     @property
     def rid(self):
@@ -38,23 +65,23 @@ class AssociationService:
 
     @property
     def working_arrival_time(self):
-        return self.raw.wta
+        return self._working_arrival_time
 
     @property
     def working_departure_time(self):
-        return self.raw.wtd
+        return self._working_departure_time
 
     @property
     def working_pass_time(self):
-        return self.raw.wtp
+        return self._working_pass_time
 
     @property
     def public_arrival_time(self):
-        return self.raw.pta
+        return self._public_arrival_time
 
     @property
     def public_departure_time(self):
-        return self.raw.ptd
+        return self._public_departure_time
 
 
 class AssociationMessage(BaseMessage):
@@ -77,10 +104,10 @@ class AssociationMessage(BaseMessage):
 
     @property
     def cancelled(self):
-        return self.raw.isCancelled
+        return bool(self.raw.isCancelled)
 
     @property
     def deleted(self):
-        return self.raw.isDeleted
+        return bool(self.raw.isDeleted)
 
 
