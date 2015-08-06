@@ -32,6 +32,25 @@ class TestStationMessage:
         
         assert("The lifts on platforms 2 and 3 at Basingstoke will be out of use until at least September 2015. " == str(m.message))
 
+    def test_station_message_many_stations(self):
+        m = self.get_station_message_from_file("tests/data/station_message__many_stations_train.xml")
+        assert(None is not m)
+
+        assert(10 == len(m.stations))
+        assert("RNR" == m.stations[0])
+        assert("WRT" == m.stations[1])
+        assert("SAH" == m.stations[2])
+        assert("WRN" == m.stations[3])
+        assert("SHM" == m.stations[4])
+        assert("CMR" == m.stations[5])
+        assert("NWA" == m.stations[6])
+        assert("HXM" == m.stations[7])
+        assert("GNT" == m.stations[8])
+        assert("NRW" == m.stations[9])
+        assert(52096 == m.smid)
+        assert(StationMessageCategory.Train == m.category)
+        assert(StationMessageSeverity.LevelOne == m.severity)
+
     def test_station_message_link(self):
         m = self.get_station_message_from_file("tests/data/station_message__link.xml")
         assert(None is not m)
