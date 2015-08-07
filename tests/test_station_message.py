@@ -64,4 +64,19 @@ class TestStationMessage:
         
         assert("Because of engineering work, there are no train services at this station until 26 October 2015. Rail replacement buses leave Bicester Village from the main bus stop at Pringle Drive. More details are available from the Current Engineering Work area of the <a href=http://nationalrail.co.uk/service_disruptions/62816.aspx>National Rail Enquiries website</a>. " == str(m.message))
 
+    def test_station_message_paragraph(self):
+        m = self.get_station_message_from_file("tests/data/station_message__paragraph.xml")
+        assert(None is not m)
+
+        assert(5 == len(m.stations))
+        assert("HKC" == m.stations[0])
+        assert("HTF" == m.stations[1])
+        assert("KID" == m.stations[2])
+        assert("SED" == m.stations[3])
+        assert("SMA" == m.stations[4])
+        assert(52087 == m.smid)
+        assert(StationMessageCategory.Station == m.category)
+        assert(StationMessageSeverity.LevelZero == m.severity)
+        assert("<p>The ticket office at this station is currently closed. </p>" == str(m.message))
+
 
