@@ -62,7 +62,7 @@ class TestStationMessage:
         assert(StationMessageCategory.Station == m.category)
         assert(StationMessageSeverity.LevelZero == m.severity)
         
-        assert("Because of engineering work, there are no train services at this station until 26 October 2015. Rail replacement buses leave Bicester Village from the main bus stop at Pringle Drive. More details are available from the Current Engineering Work area of the <a href=http://nationalrail.co.uk/service_disruptions/62816.aspx>National Rail Enquiries website</a>. " == str(m.message))
+        assert("Because of engineering work, there are no train services at this station until 26 October 2015. Rail replacement buses leave Bicester Village from the main bus stop at Pringle Drive. More details are available from the Current Engineering Work area of the <a href=\"http://nationalrail.co.uk/service_disruptions/62816.aspx\">National Rail Enquiries website</a>. " == str(m.message))
 
     def test_station_message_paragraph(self):
         m = self.get_station_message_from_file("tests/data/station_message__paragraph.xml")
@@ -78,5 +78,15 @@ class TestStationMessage:
         assert(StationMessageCategory.Station == m.category)
         assert(StationMessageSeverity.LevelZero == m.severity)
         assert("<p>The ticket office at this station is currently closed. </p>" == str(m.message))
+
+    def test_station_message_multiple_paragraphs_and_link(self):
+        m = self.get_station_message_from_file("tests/data/station_message__multiple_paragraphs_and_link.xml")
+        assert(None is not m)
+
+        assert(0 == len(m.stations))
+        assert(52169 == m.smid)
+        assert(StationMessageCategory.Train == m.category)
+        assert(StationMessageSeverity.LevelOne == m.severity)
+        assert("<p>Journeys between Ipswich and Cambridge are being delayed by up to 10 minutes. More details can be found in <a href=\"http://nationalrail.co.uk/service_disruptions/104721.aspx\">Latest Travel News.</a></p><p></p><p></p>" == str(m.message))
 
 

@@ -80,7 +80,7 @@ class StationMessageContent:
                 s += i.value
             elif type(i) == ElementContent:
                 if type(i.value) == sm.CTD_ANON_2:
-                    s += "<a href="+i.value.href+">"+i.value.value()+"</a>"
+                    s += "<a href=\""+i.value.href+"\">"+i.value.value()+"</a>"
                 elif type(i.value) == sm.CTD_ANON_:
                     s += "<p>"
                     for j in i.value.orderedContent():
@@ -88,7 +88,7 @@ class StationMessageContent:
                             s += j.value
                         elif type(j) == ElementContent:
                             if type(j.value) == sm.CTD_ANON_2:
-                                s += "<a href="+j.value.href+">"+j.value.value()+"</a>"
+                                s += "<a href=\""+j.value.href+"\">"+j.value.value()+"</a>"
                             else:
                                 raise UnknownXbOrderedContentItemError("Unrecognised ElementType in StationMessage.Msg.P.OrderedContent context: {}".format(j.value))
                         else:
