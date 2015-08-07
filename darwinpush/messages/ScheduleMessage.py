@@ -86,7 +86,7 @@ class ScheduleLocation:
 
     @property
     def cancelled(self):
-        return self.raw.can
+        return bool(self.raw.can)
 
     @property
     def false_tiploc(self):
@@ -207,8 +207,8 @@ class OperationalDestination(ScheduleLocation):
 
 class ScheduleMessage(BaseMessage):
 
-    def __init__(self, message, containing_message):
-        super().__init__(message, containing_message)
+    def __init__(self, message, containing_message, xml):
+        super().__init__(message, containing_message, xml)
         self._build_point_lists()
 
     def _build_point_lists(self):
@@ -312,7 +312,7 @@ class ScheduleMessage(BaseMessage):
     """
     @property
     def passenger_service(self):
-        return self.raw.isPassengerSvc
+        return bool(self.raw.isPassengerSvc)
 
     """
     Status of the service, i.e. bus/ferry/train.
@@ -333,21 +333,21 @@ class ScheduleMessage(BaseMessage):
     """
     @property
     def active(self):
-        return self.raw.isActive
+        return bool(self.raw.isActive)
 
     """
     Indicates whether the schedule has been deleted in Darwin.
     """
     @property
     def deleted(self):
-        return self.raw.deleted
+        return bool(self.raw.deleted)
 
     """
     Indicates whether the schedule is for a charter service.
     """
     @property
     def charter(self):
-        return self.raw.isCharter
+        return bool(self.raw.isCharter)
 
     """
     ???

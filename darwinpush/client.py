@@ -31,9 +31,10 @@ class ErrorType(enum.Enum):
 
 
 class Error:
-    def __init__(self, error_type, message):
+    def __init__(self, error_type, message, exception):
         self._error_type = error_type
         self._payload = payload
+        self._exception = exception
 
     @property
     def payload(self):
@@ -42,6 +43,13 @@ class Error:
     @property
     def error_type(self):
         return self._error_type
+
+    @property
+    def exception(self):
+        return self._exception
+
+    def __str__(self):
+        return str(self._exception)
 
 
 def has_method(_class, _method):
@@ -97,47 +105,47 @@ class Client:
         # Process SCHEDULE messages.
         for i in r.schedule:
             log.debug("SCHEDULE message received.")
-            self._emit_processed_message(ScheduleMessage(i, m))
+            self._emit_processed_message(ScheduleMessage(i, m, message))
 
         # Process DEACTIVATED messages.
         for i in r.deactivated:
             log.debug("DEACTIVATED message received.")
-            self._emit_processed_message(DeactivatedMessage(i, m))
+            self._emit_processed_message(DeactivatedMessage(i, m, message))
 
         # Process ASSOCATION messages.
         for i in r.association:
             log.debug("ASSOCIATION message received.")
-            self._emit_processed_message(AssociationMessage(i, m))
+            self._emit_processed_message(AssociationMessage(i, m, message))
 
         # Process TS messages.
         for i in r.TS:
             log.debug("TS message received.")
-            self._emit_processed_message(TrainStatusMessage(i, m))
+            self._emit_processed_message(TrainStatusMessage(i, m, message))
 
         # Process OW messages.
         for i in r.OW:
             log.debug("OW message received.")
-            self._emit_processed_message(StationMessage(i, m))
+            self._emit_processed_message(StationMessage(i, m, message))
 
         # Process TRAINALERT messages.
         for i in r.trainAlert:
             log.debug("TRAINALERT message received.")
-            self._emit_processed_message(TrainAlertMessage(i, m))
+            self._emit_processed_message(TrainAlertMessage(i, m, message))
 
         # Process TRAINORDER messages.
         for i in r.trainOrder:
             log.deug("TRAINORDER message received.")
-            self._emit_processed_message(TrainOrderMessage(i, m))
+            self._emit_processed_message(TrainOrderMessage(i, m, message))
 
         # Process TRACKINGID messages.
         for i in r.trackingID:
             log.debug("TRACKINGID message received.")
-            self._emit_processed_message(TrackingIdMessage(i, m))
+            self._emit_processed_message(TrackingIdMessage(i, m, message))
 
         # Process ALARM messages.
         for i in r.alarm:
             log.debug("ALARM message received.")
-            self._emit_processed_message(AlarmMessage(i, m))
+            self._emit_processed_message(AlarmMessage(i, m, message))
 
     def _on_error(self, headers, message):
         print("Error: %s, %s" % (headers, message))
@@ -145,6 +153,11 @@ class Client:
     def _emit_processed_message(self, message):
         for name, listener in self.listeners.items():
             listener.queue.put(message)
+
+    def _on_local_error(self, error):
+        print("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ Caught Message Error in Client Thread +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
+        print(str(error))
+        print("+-+-+-+-+-+-+-+-+-+-+-+-+-+-++-+-+-+-+-+-+-+-+-+-+-+-+-+-++-+-+-+-+-+-+-+-+-+-+-+-+-+-++-+-+-+-+-+-+-+-")
 
     def run(self):
         while 1:
@@ -201,9 +214,9 @@ class StompClient:
                     self.cb._on_message(headers, decompressed_data)
                 except Exception as e:
                     log.exception("Exception occurred parsing DARWIN message: {}.".format(decompressed_data))
-                    self.on_local_error(Error(ErrorType.ParseError, decompressed_data))
+                    self.on_local_error(Error(ErrorType.ParseError, decompressed_data, e))
             except Exception as e:
                 log.exception("Exception occurred decompressing the STOMP message.")
-                self.on_local_error(Error(ErrorType.DecompressionError, (headers, message)))
+                self.on_local_error(Error(ErrorType.DecompressionError, (headers, message), e))
 
 

@@ -106,8 +106,8 @@ class StationMessageContent:
 
 class StationMessage(BaseMessage):
 
-    def __init__(self, message, containing_message):
-        super().__init__(message, containing_message)
+    def __init__(self, message, containing_message, xml):
+        super().__init__(message, containing_message, xml)
         self._build_stations_list()
         self._build_message()
 
