@@ -63,12 +63,12 @@ class ScheduleLocation:
         return day_incrementor
 
     def _get_last_time(self):
-        if self.working_departure_time is not None:
-            return self.working_departure_time.time()
-        elif self.working_pass_time is not None:
-            return self.working_pass_time.time()
-        elif self.working_arrival_time is not None:
-            return self.working_arrival_time.time()
+        if self.raw_working_departure_time is not None:
+            return parse(self.raw_working_departure_time).time()
+        elif self.raw_working_pass_time is not None:
+            return parse(self.raw_working_pass_time).time()
+        elif self.raw_working_arrival_time is not None:
+            return parse(self.raw_working_arrival_time).time()
         else:
             raise Exception()
 
