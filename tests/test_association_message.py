@@ -14,12 +14,13 @@ class TestAssociationMessage:
     
     def get_association_message_from_file(self, file_path):
         with open(file_path) as f:
-            r = pp.CreateFromDocument(f.read())
+            x = f.read()
+            r = pp.CreateFromDocument(x)
             assert(r.sR is None)
             assert(r.uR is not None)
             assert(len(r.uR.association) == 1)
             
-            s = AssociationMessage(r.uR.association[0], r)
+            s = AssociationMessage(r.uR.association[0], r, x)
             return s
 
     def test_association_next_message(self):
