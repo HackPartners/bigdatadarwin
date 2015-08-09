@@ -15,9 +15,9 @@ class TestScheduleMessage:
         with open(file_path) as f:
             x = f.read()
             r = pp.CreateFromDocument(x)
-            assert(r.sR is None)
-            assert(r.uR is not None)
-            assert(len(r.uR.schedule) == 1)
+            assert(None is r.sR)
+            assert(None is not r.uR)
+            assert(1 == len(r.uR.schedule))
             
             s = ScheduleMessage(r.uR.schedule[0], r, x)
             return s
@@ -111,7 +111,7 @@ class TestScheduleMessage:
 
     def test_schedule_message_cross_midnight(self):
         m = self.get_schedule_message_from_file("tests/data/schedule_message__cross_midnight.xml")
-        assert(m is not None)
+        assert(None is not m)
 
         # Check the basic message properties.
         assert("P00313" == m.uid)
@@ -207,7 +207,7 @@ class TestScheduleMessage:
 
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 7, 22, 11, 0)) == i.working_arrival_time)
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 7, 22, 9, 0)) == i.public_arrival_time)
-        assert(i.working_pass_time is None)
+        assert(None is i.working_pass_time)
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 7, 22, 11, 0)) == i.public_departure_time)
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 7, 22, 13, 0)) == i.working_departure_time)
 
@@ -222,7 +222,7 @@ class TestScheduleMessage:
 
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 7, 23, 15, 30)) == i.working_arrival_time)
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 7, 23, 15, 0)) == i.public_arrival_time)
-        assert(i.working_pass_time is None)
+        assert(None is i.working_pass_time)
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 7, 23, 16, 0)) == i.public_departure_time)
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 7, 23, 17, 30)) == i.working_departure_time)
 
@@ -237,7 +237,7 @@ class TestScheduleMessage:
 
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 8, 0, 20, 0)) == i.working_arrival_time)
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 8, 0, 20, 0)) == i.public_arrival_time)
-        assert(i.working_pass_time is None)
+        assert(None is i.working_pass_time)
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 8, 0, 22, 0)) == i.public_departure_time)
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 8, 0, 22, 0)) == i.working_departure_time)
 
@@ -252,8 +252,95 @@ class TestScheduleMessage:
 
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 8, 0, 56)) == i.working_arrival_time)
         assert(pytz.utc.localize(datetime.datetime(2015, 8, 8, 0, 56)) == i.public_arrival_time)
-        assert(i.working_pass_time is None)
-        assert(i.public_departure_time is None)
-        assert(i.working_departure_time is None)
+        assert(None is i.working_pass_time)
+        assert(None is i.public_departure_time)
+        assert(None is i.working_departure_time)
+
+    def test_schedule_message_not_passenger(self):
+        m = self.get_schedule_message_from_file("tests/data/schedule_message__not_passenger.xml")
+        assert(m is not None)
+
+        # Check the basic message properties.
+        assert("Y58074" == m.uid)
+        assert("201508093490803" == m.rid)
+        assert("5S23" == m.headcode)
+        assert(datetime.date(2015, 8, 9) == m.start_date)
+        assert("GR" == m.toc_code)
+        assert(False is m.passenger_service)
+        assert("P" == m.status)
+        assert("EE" == m.category)
+        assert(True is m.active)
+        assert(False is m.deleted)
+        assert(False is m.charter)
+        assert(None is m.cancel_reason)
+
+        # Check the size of the list properties.
+        assert(0 == len(m.origins))
+        assert(1 == len(m.operational_origins))
+        assert(0 == len(m.intermediate_points))
+        assert(1 == len(m.operational_intermediate_points))
+        assert(1 == len(m.passing_points))
+        assert(0 == len(m.destinations))
+        assert(1 == len(m.operational_destinations))
+
+        # Check the properties of an operational origin.
+        i = m.operational_origins[0]
+        assert("EDINBUR" == i.tiploc)
+        assert("TB" == i.activity_codes)
+        assert(None is i.planned_activity_codes)
+        assert(False is i.cancelled)
+        assert(None is i.false_tiploc)
+        assert(None is i.route_delay)
+
+        assert(None is i.working_arrival_time)
+        assert(None is i.public_arrival_time)
+        assert(None is i.working_pass_time)
+        assert(None is i.public_departure_time)
+        assert(pytz.utc.localize(datetime.datetime(2015, 8, 9, 19, 40)) == i.working_departure_time)
+
+        # Check the properties of a passing point.
+        i = m.passing_points[0]
+        assert("ABHLJN" == i.tiploc)
+        assert("  " == i.activity_codes)
+        assert(None is i.planned_activity_codes)
+        assert(False is i.cancelled)
+        assert(None is i.false_tiploc)
+        assert(0 == i.route_delay)
+
+        assert(None is i.working_arrival_time)
+        assert(None is i.public_arrival_time)
+        assert(pytz.utc.localize(datetime.datetime(2015, 8, 9, 19, 42)) == i.working_pass_time)
+        assert(None is i.public_departure_time)
+        assert(None is i.working_departure_time)
+
+        # Check the properties of an operational intermediate point.
+        i = m.operational_intermediate_points[0]
+        assert("CRGNTYJ" == i.tiploc)
+        assert("OP" == i.activity_codes)
+        assert(None is i.planned_activity_codes)
+        assert(False is i.cancelled)
+        assert(None is i.false_tiploc)
+        assert(0 == i.route_delay)
+
+        assert(pytz.utc.localize(datetime.datetime(2015, 8, 9, 19, 44)) == i.working_arrival_time)
+        assert(None is i.public_arrival_time)
+        assert(None is i.working_pass_time)
+        assert(None is i.public_departure_time)
+        assert(pytz.utc.localize(datetime.datetime(2015, 8, 9, 19, 44, 30)) == i.working_departure_time)
+
+        # Check the properties of an operational destination.
+        i = m.operational_destinations[0]
+        assert("CRGNTNY" == i.tiploc)
+        assert("TF" == i.activity_codes)
+        assert(None is i.planned_activity_codes)
+        assert(False is i.cancelled)
+        assert(None is i.false_tiploc)
+        assert(0 == i.route_delay)
+
+        assert(pytz.utc.localize(datetime.datetime(2015, 8, 9, 19, 48)) == i.working_arrival_time)
+        assert(None is i.public_arrival_time)
+        assert(None is i.working_pass_time)
+        assert(None is i.public_departure_time)
+        assert(None is i.working_departure_time)
 
 
