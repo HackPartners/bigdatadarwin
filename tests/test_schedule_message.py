@@ -343,4 +343,66 @@ class TestScheduleMessage:
         assert(None is i.public_departure_time)
         assert(None is i.working_departure_time)
 
+    @pytest.mark.xfail
+    def test_schedule_message_multiple_origins(self):
+        # Need an example ScheduleMessage with multiple origins. Is this even possible?
+        assert(False)
+
+    @pytest.mark.xfail
+    def test_schedule_message_multiple_destinations(self):
+        # Need an example ScheduleMessage with multiple destinations. Is this even possible?
+        assert(False)
+
+    @pytest.mark.xfail
+    def test_schedule_message_spring_forward(self):
+        # Need to cover all our bases for schedules that cross the "Spring Forward" boundary
+        # primarily to make sure the tz aware datetime determination works properly.
+        assert(False)
+
+    @pytest.mark.xfail
+    def test_schedule_message_fall_back(self):
+        # Need to cover all our bases for schedules that cross the "Fall Back" boundary
+        # primarily to make sure the tz aware datetime determination works properly.
+        assert(False)
+
+    @pytest.mark.xfail
+    def test_schedule_message_gmt(self):
+        # All the other test schedules use BST time. Need a test to make sure GMT ones work fine too.
+        assert(False)
+
+    @pytest.mark.xfail
+    def test_schedule_message_deleted(self):
+        # Need an example of a ScheudleMessage that is deleted.
+        assert(False)
+
+    @pytest.mark.xfail
+    def test_schedule_message_cancelled(self):
+        # Need an example of a ScheduleMessage that is cancelled at some calling point.
+        assert(False)
+
+    @pytest.mark.xfail
+    def test_schedule_message_false_tiploc(self):
+        # Need an example of a ScheduleMessage with a false tiploc at some calling point.
+        assert(False)
+
+    @pytest.mark.xfail
+    def test_schedule_message_route_delay(self):
+        # Need an example of a ScheduleMessage with a route delay at some calling point.
+        assert(False)
+
+    @pytest.mark.xfail
+    def test_schedule_message_active(self):
+        # Need an example of a ScheduleMessage that is not active in Darwin.
+        assert(False)
+
+    @pytest.mark.xfail
+    def test_schedule_message_charter(self):
+        # Need an example of a ScheduleMessage that is a charter train.
+        assert(False)
+
+    @pytest.mark.xfail
+    def test_schedule_message_cancel_reason(self):
+        # Need an example of a ScheduleMessage that has a cancel reason.
+        assert(False)
+
 
