@@ -17,10 +17,10 @@ safe to rely on yet. Use at your own risk.*
 
 * The generated bindings for the Darwin XSDs are in place.
 
-* The implementation of the friendly message classes is incomplete. ScheduleMessage is mostly done,
-  but the others are still at early stages of implementation.
-
-* Test coverage is extremely limited.
+* The implementation of the friendly message classes is mostly complete. All of the message types except for the following are implemented, with some reasonable level of test coverage (although some rarer properties are not fully tested yet).
+  * Train Status
+  * Tracking ID (appears to be not yet in use in public Darwin)
+  * Train Alert (appears to be not yet in use in public Darwin)
 
 ## How To Use
 Devlopment is still in its early stages, so there's no easy "How To" just yet. If that's what you
