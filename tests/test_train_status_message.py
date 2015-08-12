@@ -49,4 +49,37 @@ class TestTrainStatusMessage:
         assert("CRYSTLP" == l.tiploc)
         assert(False is l.near)
 
+    def test_train_status_message_actual_time(self):
+        m = self.get_train_status_message_from_file("tests/data/train_status_message__actual_time.xml")
+        assert(None is not m)
+
+        assert("201508113560355" == m.rid)
+        assert("W84968" == m.uid)
+        assert(datetime.date(2015, 8, 11) == m.start_date)
+        assert(None is m.late_reason)
+        assert(1 == len(m.locations))
+        assert(False is m.reverse_formation)
+
+        l = m.locations[0]
+        assert(None is not l)
+        assert(None is l.forecast_arrival_time)
+        assert(None is l.forecast_departure_time)
+        assert(None is not l.forecast_pass_time)
+        assert(None is l.platform)
+        assert(None is l.suppressed)
+        assert(None is l.length)
+        assert(None is l.detach_front)
+        assert(None is l.working_arrival_time)
+        assert(None is l.working_departure_time)
+        assert(datetime.time(21, 59) == l.working_pass_time)
+        assert(None is l.public_arrival_time)
+        assert(None is l.public_departure_time)
+        assert("STRENJN" == l.tiploc)
+
+        t = l.forecast_pass_time
+        assert(None is not t)
+        assert(None is t.estimated_time)
+        assert(None is t.working_estimated_time)
+        assert(datetime.time(22, 1) == t.actual_time)
+
 
