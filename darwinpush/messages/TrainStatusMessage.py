@@ -1,25 +1,78 @@
 from darwinpush.messages.BaseMessage import BaseMessage
 
+from dateutil.parser import *
+
 class LateReason:
 
     def __init__(self, raw):
         self.raw = raw
 
     @property
+    def code(self):
+        return self.raw.value()
+
+    @property
     def tiploc(self):
         return self.raw.tiploc
 
+    """
+    True if the TIPLOC property should be interpreted as "near" instead of "at", otherwise False.
+    e.g. "Signal Failure near Plymouth" instead of "Signal Failure at Plymouth"
+    """
     @property
     def near(self):
-        return self.raw.near
+        return bool(self.raw.near)
+
+    def __repr__(self):
+        return "LateReason({},{},{})".format(self.code, self.tiploc, self.near)
+
+
+class Location:
+
+    def __init__(self, raw):
+        self.raw = raw
 
 
 class TrainStatusMessage(BaseMessage):
+
+    def __init__(self, raw, containing_message, xml):
+        super().__init__(raw, containing_message, xml)
+        self._make_late_reason()
+        self._make_locations()
     
+    def _make_late_reason(self):
+        if self.raw.LateReason is not None:
+            self._late_reason = LateReason(self.raw.LateReason)
+        else:
+            self._late_reason = None
+
+    def _make_locations(self):
+        self._locations = []
+        for l in self.raw.Location:
+            self._locations.append(Location(l))
+
     @property
     def late_reason(self):
-        return self.raw.LateReason
+        return self._late_reason
+    
+    @property
+    def locations(self):
+        return self._locations
 
+    @property
+    def rid(self):
+        return self.raw.rid
 
+    @property
+    def uid(self):
+        return self.raw.uid
+
+    @property
+    def start_date(self):
+        return self.raw.ssd.date()
+
+    @property
+    def reverse_formation(self):
+        return bool(self.raw.isReverseFormation)
 
 
