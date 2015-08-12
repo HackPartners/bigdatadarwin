@@ -87,5 +87,50 @@ class TestTrainStatusMessage:
         assert(0 == t.unknown_delay)
         assert("TRUST" == t.source)
         assert("Auto" == t.source_cis)
+    
+    def test_train_status_message_platform_suppressed(self):
+        m = self.get_train_status_message_from_file("tests/data/train_status_message__plat_sup.xml")
+        assert(None is not m)
 
+        assert("201508113548457" == m.rid)
+        assert("G00192" == m.uid)
+        assert(datetime.date(2015, 8, 11) == m.start_date)
+        assert(None is m.late_reason)
+        assert(1 == len(m.locations))
+        assert(False is m.reverse_formation)
 
+        l = m.locations[0]
+        assert(None is not l)
+        assert(None is l.forecast_arrival_time)
+        assert(None is l.forecast_departure_time)
+        assert(None is not l.forecast_pass_time)
+        assert(None is not l.platform)
+        assert(None is l.suppressed)
+        assert(None is l.length)
+        assert(None is l.detach_front)
+        assert(None is l.working_arrival_time)
+        assert(None is l.working_departure_time)
+        assert(datetime.time(22, 5, 30) == l.working_pass_time)
+        assert(None is l.public_arrival_time)
+        assert(None is l.public_departure_time)
+        assert("BROXBRN" == l.tiploc)
+
+        t = l.forecast_pass_time
+        assert(None is not t)
+        assert(None is t.estimated_time)
+        assert(None is t.working_estimated_time)
+        assert(datetime.time(22, 6) == t.actual_time)
+        assert(0 == t.actual_time_removed)
+        assert(None is t.manual_estimate_lower_limit_minutes)
+        assert(0 == t.manual_estimate_unknown_delay)
+        assert(0 == t.unknown_delay)
+        assert("TD" == t.source)
+        assert(None is t.source_cis)
+    
+        p = l.platform
+        assert(None is not l.platform)
+        assert(True is p.suppressed)
+        assert(True is p.suppressed_by_cis)
+        assert("P" == p.source)
+        assert(False is p.confirmed)
+        assert("2" == p.number)

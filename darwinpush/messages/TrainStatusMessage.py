@@ -52,7 +52,9 @@ class Location:
 
     @property
     def platform(self):
-        return self.raw.plat
+        if self.raw.plat is None:
+            return None
+        return Platform(self.raw.plat)
 
     @property
     def suppressed(self):
@@ -147,6 +149,32 @@ class Forecast:
     @property
     def source_cis(self):
         return self.raw.srcInst
+
+
+class Platform:
+
+    def __init__(self, raw):
+        self.raw = raw
+
+    @property
+    def suppressed(self):
+        return bool(self.raw.platsup)
+
+    @property
+    def suppressed_by_cis(self):
+        return bool(self.raw.cisPlatsup)
+
+    @property
+    def source(self):
+        return self.raw.platsrc
+
+    @property
+    def confirmed(self):
+        return bool(self.raw.conf)
+
+    @property
+    def number(self):
+        return self.raw.value()
 
 
 class TrainStatusMessage(BaseMessage):
