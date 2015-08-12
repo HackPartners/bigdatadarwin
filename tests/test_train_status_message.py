@@ -81,5 +81,11 @@ class TestTrainStatusMessage:
         assert(None is t.estimated_time)
         assert(None is t.working_estimated_time)
         assert(datetime.time(22, 1) == t.actual_time)
+        assert(0 == t.actual_time_removed)
+        assert(None is t.manual_estimate_lower_limit_minutes)
+        assert(0 == t.manual_estimate_unknown_delay)
+        assert(0 == t.unknown_delay)
+        assert("TRUST" == t.source)
+        assert("Auto" == t.source_cis)
 
 
