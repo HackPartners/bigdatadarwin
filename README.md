@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/fasteroute/darwinpush.svg?branch=master)](https://travis-ci.org/grundleborg/darwinpush) [![Documentation Status](https://readthedocs.org/projects/darwinpush/badge/?version=latest)](https://readthedocs.org/projects/darwinpush/?badge=latest)
+[![Build Status](https://travis-ci.org/fasteroute/darwinpush.svg?branch=master)](https://travis-ci.org/fasteroute/darwinpush) [![Documentation Status](https://readthedocs.org/projects/darwinpush/badge/?version=latest)](https://readthedocs.org/projects/darwinpush/?badge=latest)
 
 # darwinpush
 
