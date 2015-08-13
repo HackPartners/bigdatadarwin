@@ -1,5 +1,5 @@
 from darwinpush.messages import *
-from darwinpush.messages.TrainStatusMessage import TrainStatusXMLFactory
+from darwinpush.messagefactories.xml import *
 
 import logging
 log = logging.getLogger("darwinpush")
@@ -46,7 +46,7 @@ class Parser:
             # Process TS messages.
             for i in r.TS:
                 log.debug("TS message received.")
-                o = TrainStatusXMLFactory.build(i, m, message)
+                o = TrainStatusXMLMessageFactory.build(i, m, message)
                 self.q_out.put(o)
 
             # Process OW messages.
