@@ -1,4 +1,5 @@
 from darwinpush.messages import *
+from darwinpush.messages.TrainStatusMessage import TrainStatusXMLFactory
 
 from stomp.connect import StompConnection12
 
@@ -7,8 +8,9 @@ import pyxb.utils.domutils as domutils
 import darwinpush.xb.pushport as pp
 
 import enum
-import threading
+import multiprocessing
 import sys
+import threading
 import time
 import zlib
 
@@ -23,6 +25,12 @@ log = logging.getLogger("darwinpush")
 #logging.getLogger().setLevel(logging.DEBUG)
 #LOGGER = logging.getLogger('stomp')
 #####
+
+def listener_process(c, q):
+    print("Listener Process")
+    listener = c(q)
+    listener._run()
+
 
 class ErrorType(enum.Enum):
 
@@ -88,7 +96,10 @@ class Client:
         self._run()
 
     def register_listener(self, name, listener):
-        self.listeners[name] = listener
+        q = multiprocessing.Queue()
+        p = multiprocessing.Process(target=listener_process, args=(listener, q))
+        p.start()
+        self.listeners[name] = (p, q)
 
     def _run(self):
         self.thread = threading.Thread(target=self._connect)
@@ -141,7 +152,7 @@ class Client:
         # Process TS messages.
         for i in r.TS:
             log.debug("TS message received.")
-            self._emit_processed_message(TrainStatusMessage(i, m, message))
+            self._emit_processed_message(TrainStatusXMLFactory.build(i, m, message))
 
         # Process OW messages.
         for i in r.OW:
@@ -172,8 +183,8 @@ class Client:
         print("Error: %s, %s" % (headers, message))
 
     def _emit_processed_message(self, message):
-        for name, listener in self.listeners.items():
-            listener.queue.put(message)
+        for name, (p, q) in self.listeners.items():
+            q.put(message)
 
     def _on_local_error(self, error):
         print("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ Caught Message Error in Client Thread +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")

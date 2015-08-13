@@ -7,14 +7,31 @@ import time
 
 # Create a listener to process the messages.
 class MyListener(Listener):
-    def __init__(self):
+    def __init__(self, q):
         # TODO: Do any setup you need to do here.
         print("Setting Up")
+        self.counter = 0
+        self.ts_counter = 0
 
         # Finally, call the Super Class initialiser.
-        super().__init__()
+        super().__init__(q)
 
     def on_schedule_message(self, message):
+        #if message.passenger_service is False:
+        #    print("^^^^^^^^^^^^ Passenger Service: False ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        #    print(message.xml)
+        if message.active is False:
+            print("^^^^^^^^^^^^ Active: False ^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+            print(message.xml)
+        #if message.cancel_reason is not None:
+        #    print("^^^^^^^^^^^^ Cancel Reason not null ^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        #    print(message.xml)
+        if message.charter is True:
+            print("^^^^^^^^^^^^^^ Charter ^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+            print(message.xml)
+        #print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+        
+        #print(message.xml)
         #for OR in message.origins:
         #    print(OR.tiploc)
         #for OR in message.operational_origins:
@@ -23,44 +40,63 @@ class MyListener(Listener):
         pass
 
     def on_deactivated_message(self, message):
-        #print(message.rid)
+        self.counter += 1
+        if self.counter % 100 == 0:
+            print("100 Deactivated Messages")
         pass
 
     def on_association_message(self, message):
-        if message.category is not AssociationCategory.Next:
-            print(message.category)
+        if message.category == AssociationCategory.Next or message.category == AssociationCategory.Join or message.category == AssociationCategory.Split:
+            return
+        print("***************** Assoc Message: {} *********************************".format(message.category))
+        print(message.xml)
+        print("**********************************************************************************************")
+        #if message.category is not AssociationCategory.Next:
+        #    print(message.category)
 
     def on_alarm_message(self, message):
-        print("Alarm Message Type: {}".format(type(message.raw)))
-        print(message.raw.toxml())
-        print("=========================================================")
+        print("===================================== BEGIN: Alarm =================================")
+        print(message.xml)
+        print("===================================== END: Alarm =================================")
 
     def on_station_message(self, message):
-        print("Station Message Type: {}".format(type(message.raw)))
-        print(message.raw.toxml())
-        print("=========================================================")
+        #print("===================================== BEGIN: Station =================================")
+        #print(message.xml)
+        #print("===================================== END: Station =================================")
+        pass
 
     def on_tracking_id_message(self, message):
-        print("Tracking ID Message Type: {}.".format(type(message.raw)))
-        print(message.raw.toxml())
-        print("=========================================================")
+        print("===================================== BEGIN: Tracking ID =================================")
+        print(message.xml)
+        print("===================================== END: Tracking ID =================================")
 
     def on_train_alert_message(self, message):
-        print("Train Alert Message Type: {}.".format(type(message.raw)))
-        print(message.raw.toxml())
-        print("=========================================================")
+        print("===================================== BEGIN: Alert =================================")
+        print(message.xml)
+        print("===================================== END: Alert =================================")
 
     def on_train_order_message(self, message):
-        print("Train Order Message Type: {}.".format(type(message.raw)))
-        print(message.raw.toxml())
-        print("=========================================================")
+        print("===================================== BEGIN: Train Order =================================")
+        print(message.xml)
+        print("===================================== END: Train Order =================================")
 
     def on_train_status_message(self, message):
         #print("Train Status Message Type: {}.".format(type(message.raw)))
+        #print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        #print(message.xml.decode("utf-8"))
+        #print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")a
+        #self.ts_counter += 1
+        #if self.ts_counter % 1000 == 0:
+        #    print("1000 forecasts received")
         if message.late_reason is not None:
-            if message.late_reason.tiploc is not None and bool(message.late_reason.near) is not False:
+            #print(message.locations)
+            # print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+            # print(message.xml.decode("utf-8"))
+            # print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+            if message.late_reason.tiploc is not None:
+                print("!£$%^&*()!£$%^&*(!£$%^&*()£$%^&*()$%^&*()£$%^&*()£$%^&*()")
                 print("{} -- {}".format(message.late_reason.tiploc, message.late_reason.near))
-                print(message.raw.toxml())
+                print(message._xml)
                 print("====================================================")
         pass
 
@@ -69,7 +105,7 @@ class MyListener(Listener):
 client = Client(os.environ["STOMP_USER"], os.environ["STOMP_PASS"], os.environ["STOMP_QUEUE"])
 
 # Instantiate our listener class and register it with the Push Port client.
-listener = MyListener()
+listener = MyListener
 client.register_listener('', listener)
 
 # Connect the Push Port client.

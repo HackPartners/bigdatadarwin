@@ -2,221 +2,151 @@ from darwinpush.messages.BaseMessage import BaseMessage
 
 from dateutil.parser import *
 
+class TrainStatusXMLFactory:
+
+    @staticmethod
+    def build(raw, containing_message, xml):
+        m = TrainStatusMessage()
+
+        if raw.LateReason is not None:
+            m.late_reason = TrainStatusXMLFactory.build_late_reason(raw.LateReason)
+        else:
+            m.late_reason = None
+
+        m.locations = []
+        for l in raw.Location:
+            m.locations.append(TrainStatusXMLFactory.build_location(l))
+
+        m.rid = raw.rid
+        m.uid = raw.uid
+        m.start_date = raw.ssd.date()
+        m.reverse_formation = bool(raw.isReverseFormation)
+
+        m._raw = raw
+        m._containing_message = containing_message
+        m._xml = xml
+
+        return m
+
+    @staticmethod
+    def build_late_reason(raw):
+        r = LateReason()
+
+        r.code = raw.value()
+        r.tiploc = raw.tiploc
+        r.near = bool(raw.near)
+
+        return r
+
+    @staticmethod
+    def build_location(raw):
+        r = Location()
+
+        r.forecast_arrival_time = TrainStatusXMLFactory.build_forecast(raw.arr)
+        r.forecast_departure_time = TrainStatusXMLFactory.build_forecast(raw.dep)
+        r.forecast_pass_time = TrainStatusXMLFactory.build_forecast(raw.pass_)
+        r.platform = TrainStatusXMLFactory.build_platform(raw.plat)
+        r.suppressed = raw.suppr
+        r.length = raw.length
+        r.detach_front = raw.detachFront
+        r.working_arrival_time = TrainStatusXMLFactory.build_time(raw.wta)
+        r.working_departure_time = TrainStatusXMLFactory.build_time(raw.wtd)
+        r.working_pass_time = TrainStatusXMLFactory.build_time(raw.wtp)
+        r.public_arrival_time = TrainStatusXMLFactory.build_time(raw.pta)
+        r.public_departure_time = TrainStatusXMLFactory.build_time(raw.ptd)
+        r.tiploc = raw.tpl
+
+        return r
+
+    @staticmethod
+    def build_forecast(raw):
+        if raw is None:
+            return None
+
+        r = Forecast()
+
+        r.estimated_time = TrainStatusXMLFactory.build_time(raw.et)
+        r.working_estimated_time = TrainStatusXMLFactory.build_time(raw.wet)
+        r.actual_time = TrainStatusXMLFactory.build_time(raw.at)
+        r.actual_time_removed = raw.atRemoved
+        r.manual_estimate_lower_limit_minutes = raw.etmin
+        r.manual_estimate_unknown_delay = raw.etUnknown
+        r.unknown_delay = raw.delayed
+        r.source = raw.src
+        r.source_cis = raw.srcInst
+
+        return r
+
+    @staticmethod
+    def build_platform(raw):
+        if raw is None:
+            return None
+
+        r = Platform()
+
+        r.suppressed = bool(raw.platsup)
+        r.suppressed_by_cis = bool(raw.cisPlatsup)
+        r.source = raw.platsrc
+        r.confirmed = bool(raw.conf)
+        r.number = raw.value()
+
+        return r
+
+    @staticmethod
+    def build_time(raw):
+        if raw is None:
+            return None
+        return parse(raw).time()
+
+
 class LateReason:
+    """ Represents the reason for the late running of a service.
 
-    def __init__(self, raw):
-        self.raw = raw
-
-    @property
-    def code(self):
-        return self.raw.value()
-
-    @property
-    def tiploc(self):
-        return self.raw.tiploc
-
+    Attributes
+    ----------
+    code : int
+        The reason code for the late running of the service.
+    tiploc : string
+        The location to which this late running reason corresponds.
+    near : bool
+        True if the TIPLOC property should be interpreted as "near" instead of "at", otherwise
+        False. e.g. "Signal Failure near Plymouth" instead of "Signal Failure at Plymouth"
     """
-    True if the TIPLOC property should be interpreted as "near" instead of "at", otherwise False.
-    e.g. "Signal Failure near Plymouth" instead of "Signal Failure at Plymouth"
-    """
-    @property
-    def near(self):
-        return bool(self.raw.near)
-
+    
     def __repr__(self):
         return "LateReason({},{},{})".format(self.code, self.tiploc, self.near)
 
+    def __str__(self):
+        return __repr__()
+
 
 class Location:
-
-    def __init__(self, raw):
-        self.raw = raw
-
-    @property
-    def forecast_arrival_time(self):
-        if self.raw.arr is None:
-            return None
-        return Forecast(self.raw.arr)
-
-    @property
-    def forecast_departure_time(self):
-        if self.raw.dep is None:
-            return None
-        return Forecast(self.raw.dep)
-
-    @property
-    def forecast_pass_time(self):
-        if self.raw.pass_ is None:
-            return None
-        return Forecast(self.raw.pass_)
-
-    @property
-    def platform(self):
-        if self.raw.plat is None:
-            return None
-        return Platform(self.raw.plat)
-
-    @property
-    def suppressed(self):
-        return self.raw.suppr
-
-    @property
-    def length(self):
-        return self.raw.length
-
-    @property
-    def detach_front(self):
-        return self.raw.detachFront
-
-    @property
-    def working_arrival_time(self):
-        if self.raw.wta is None:
-            return None
-        return parse(self.raw.wta).time()
-
-    @property
-    def working_departure_time(self):
-        if self.raw.wtd is None:
-            return None
-        return parse(self.raw.wtd).time()
-
-    @property
-    def working_pass_time(self):
-        if self.raw.wtp is None:
-            return None
-        return parse(self.raw.wtp).time()
-
-    @property
-    def public_arrival_time(self):
-        if self.raw.pta is None:
-            return None
-        return parse(self.raw.pta).time()
-
-    @property
-    def public_departure_time(self):
-        if self.raw.ptd is None:
-            return None
-        return parse(self.raw.ptd).time()
-
-    @property
-    def tiploc(self):
-        return self.raw.tpl
-
+    pass
 
 class Forecast:
-
-    def __init__(self, raw):
-        self.raw = raw
-
-    @property
-    def estimated_time(self):
-        if self.raw.et is None:
-            return None
-        return parse(self.raw.et).time()
-
-    @property
-    def working_estimated_time(self):
-        if self.raw.wet is None:
-            return None
-        return parse(self.raw.wet).time()
-
-    @property
-    def actual_time(self):
-        if self.raw.at is None:
-            return None
-        return parse(self.raw.at).time()
-
-    @property
-    def actual_time_removed(self):
-        return self.raw.atRemoved
-
-    @property
-    def manual_estimate_lower_limit_minutes(self):
-        return self.raw.etmin
-
-    @property
-    def manual_estimate_unknown_delay(self):
-        return self.raw.etUnknown
-
-    @property
-    def unknown_delay(self):
-        return self.raw.delayed
-
-    @property
-    def source(self):
-        return self.raw.src
-
-    @property
-    def source_cis(self):
-        return self.raw.srcInst
-
+    pass
 
 class Platform:
+    pass
 
-    def __init__(self, raw):
-        self.raw = raw
-
-    @property
-    def suppressed(self):
-        return bool(self.raw.platsup)
-
-    @property
-    def suppressed_by_cis(self):
-        return bool(self.raw.cisPlatsup)
-
-    @property
-    def source(self):
-        return self.raw.platsrc
-
-    @property
-    def confirmed(self):
-        return bool(self.raw.conf)
-
-    @property
-    def number(self):
-        return self.raw.value()
-
-
-class TrainStatusMessage(BaseMessage):
-
-    def __init__(self, raw, containing_message, xml):
-        super().__init__(raw, containing_message, xml)
-        self._make_late_reason()
-        self._make_locations()
+class TrainStatusMessage:
+    """ Represents a Train Status Message from the Push Port.
     
-    def _make_late_reason(self):
-        if self.raw.LateReason is not None:
-            self._late_reason = LateReason(self.raw.LateReason)
-        else:
-            self._late_reason = None
-
-    def _make_locations(self):
-        self._locations = []
-        for l in self.raw.Location:
-            self._locations.append(Location(l))
-
-    @property
-    def late_reason(self):
-        return self._late_reason
-    
-    @property
-    def locations(self):
-        return self._locations
-
-    @property
-    def rid(self):
-        return self.raw.rid
-
-    @property
-    def uid(self):
-        return self.raw.uid
-
-    @property
-    def start_date(self):
-        return self.raw.ssd.date()
-
-    @property
-    def reverse_formation(self):
-        return bool(self.raw.isReverseFormation)
+    Attributes
+    ----------
+    late_reason : LateReason
+        The reason for why the service is late.
+    locations : list of Locations 
+        The locations for which information is present in this message.
+    rid : string
+        The Darwin RTTI identifier of the schedule this message applies to. This should be
+        considered to be the unique identifier of the corresponding schedule message.
+    uid : string
+        The Network Rail UID of the schedule this message applies to.
+    start_date : date
+        The start date of the schedule this message applies to.
+    reverse_formation : bool
+        True if the train is operating in the reverse of it's normal formation, otherwise False.
+    """
 
 
