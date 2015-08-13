@@ -51,11 +51,27 @@ class Error:
     def __str__(self):
         return str(self._exception)
 
+    def __repr__(self):
+        return str(self)
+
 
 def has_method(_class, _method):
     return callable(getattr(_class, _method, None))
 
 class Client:
+    """ The object that acts as the Client to the National Rail enquries Darwin Push Port STOMP server.
+
+    You should instantiate an instance of this object, with the required parameters to act as the
+    client to the Darwin Push Port. Listeners registered with this object will be passed messages
+    that are received from the server once they have been turned into the relevant python object.
+
+    Args:
+        stomp_user: Your STOMP user name taken from the National Rail Open Data portal.
+        stomp_password: Your STOMP password taken from the National Rail Open Data portal.
+        stomp_queue: Your STOMP queue name taken from the National Rail Open Data portal.
+
+    """
+
     def __init__(self, stomp_user, stomp_password, stomp_queue):
         self.stomp_user = stomp_user
         self.stomp_password = stomp_password
@@ -63,6 +79,11 @@ class Client:
         self.listeners = {}
 
     def connect(self):
+        """ Connect to the Darwin Push Port and start receiving messages.
+
+        All listeners should be registered before calling connect to ensure that no messages
+        received by the client are lost.
+        """
         self.connected = True
         self._run()
 

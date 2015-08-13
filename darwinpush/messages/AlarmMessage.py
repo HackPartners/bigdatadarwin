@@ -13,7 +13,7 @@ class Type(enum.Enum):
     TyrellFeedFail = 3
 
 
-class UnknwonAlarmTypeError(Exception):
+class UnknownAlarmTypeError(Exception):
     pass
 
 

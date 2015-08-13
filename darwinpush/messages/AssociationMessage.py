@@ -85,6 +85,12 @@ class AssociationService:
 
 
 class AssociationMessage(BaseMessage):
+    """ Message representing an Association of some form between two Schedules.
+
+    More information about the underlying Push Port message can be found at the NROD Wiki
+    `Association Data <http://nrodwiki.rockshore.net/index.php/Darwin:Association_Element>`_
+    page.
+    """
 
     @property
     def main_service(self):
