@@ -102,11 +102,7 @@ class MyListener(Listener):
 
 
 # Instantiate the Push Port client.
-client = Client(os.environ["STOMP_USER"], os.environ["STOMP_PASS"], os.environ["STOMP_QUEUE"])
-
-# Instantiate our listener class and register it with the Push Port client.
-listener = MyListener
-client.register_listener('', listener)
+client = Client(os.environ["STOMP_USER"], os.environ["STOMP_PASS"], os.environ["STOMP_QUEUE"], MyListener)
 
 # Connect the Push Port client.
 client.connect()

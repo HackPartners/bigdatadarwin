@@ -1,11 +1,10 @@
-from darwinpush.messages import *
-from darwinpush.messages.TrainStatusMessage import TrainStatusXMLFactory
-
 from stomp.connect import StompConnection12
 
 import pyxb.utils.domutils as domutils
 
 import darwinpush.xb.pushport as pp
+
+from darwinpush.parser import Parser
 
 import enum
 import multiprocessing
@@ -27,9 +26,13 @@ log = logging.getLogger("darwinpush")
 #####
 
 def listener_process(c, q):
-    print("Listener Process")
     listener = c(q)
     listener._run()
+
+
+def parser_process(q_in, q_out):
+    parser = Parser(q_in, q_out)
+    parser.run()
 
 
 class ErrorType(enum.Enum):
@@ -77,29 +80,26 @@ class Client:
         stomp_user: Your STOMP user name taken from the National Rail Open Data portal.
         stomp_password: Your STOMP password taken from the National Rail Open Data portal.
         stomp_queue: Your STOMP queue name taken from the National Rail Open Data portal.
+        listener: The class object (not an instance of it) for your Listener subclass. 
 
     """
 
-    def __init__(self, stomp_user, stomp_password, stomp_queue):
+    def __init__(self, stomp_user, stomp_password, stomp_queue, listener):
         self.stomp_user = stomp_user
         self.stomp_password = stomp_password
         self.stomp_queue = stomp_queue
-        self.listeners = {}
+
+        self.listener_queue = multiprocessing.Queue()
+        self.parser_queue = multiprocessing.Queue()
+        self.listener_process = multiprocessing.Process(target=listener_process, args=(listener, self.listener_queue))
+        self.listener_process.start()
+        self.parser_process = multiprocessing.Process(target=parser_process, args=(self.parser_queue, self.listener_queue))
+        self.parser_process.start()
 
     def connect(self):
-        """ Connect to the Darwin Push Port and start receiving messages.
-
-        All listeners should be registered before calling connect to ensure that no messages
-        received by the client are lost.
-        """
+        """ Connect to the Darwin Push Port and start receiving messages."""
         self.connected = True
         self._run()
-
-    def register_listener(self, name, listener):
-        q = multiprocessing.Queue()
-        p = multiprocessing.Process(target=listener_process, args=(listener, q))
-        p.start()
-        self.listeners[name] = (p, q)
 
     def _run(self):
         self.thread = threading.Thread(target=self._connect)
@@ -121,70 +121,10 @@ class Client:
         # Parse the record with pyXb.
         m = pp.CreateFromDOM(doc.documentElement)
 
-        # We aren't ever expecting the Snapshot Record component to contain anything.
-        if m.sR is not None:
-            print("o.O.o.O Snapshot record is not none.")
-            sys.exit(1)
-
-        # We are expecting the Update Record to contain something though!
-        if m.uR is None:
-            print("o.O.o.O Update record is none.")
-            sys.exit(1)
-        
-        # Make r the record we are looking at.
-        r = m.uR
-
-        # Process SCHEDULE messages.
-        for i in r.schedule:
-            log.debug("SCHEDULE message received.")
-            self._emit_processed_message(ScheduleMessage(i, m, message))
-
-        # Process DEACTIVATED messages.
-        for i in r.deactivated:
-            log.debug("DEACTIVATED message received.")
-            self._emit_processed_message(DeactivatedMessage(i, m, message))
-
-        # Process ASSOCATION messages.
-        for i in r.association:
-            log.debug("ASSOCIATION message received.")
-            self._emit_processed_message(AssociationMessage(i, m, message))
-
-        # Process TS messages.
-        for i in r.TS:
-            log.debug("TS message received.")
-            self._emit_processed_message(TrainStatusXMLFactory.build(i, m, message))
-
-        # Process OW messages.
-        for i in r.OW:
-            log.debug("OW message received.")
-            self._emit_processed_message(StationMessage(i, m, message))
-
-        # Process TRAINALERT messages.
-        for i in r.trainAlert:
-            log.debug("TRAINALERT message received.")
-            self._emit_processed_message(TrainAlertMessage(i, m, message))
-
-        # Process TRAINORDER messages.
-        for i in r.trainOrder:
-            log.deug("TRAINORDER message received.")
-            self._emit_processed_message(TrainOrderMessage(i, m, message))
-
-        # Process TRACKINGID messages.
-        for i in r.trackingID:
-            log.debug("TRACKINGID message received.")
-            self._emit_processed_message(TrackingIdMessage(i, m, message))
-
-        # Process ALARM messages.
-        for i in r.alarm:
-            log.debug("ALARM message received.")
-            self._emit_processed_message(AlarmMessage(i, m, message))
+        self.parser_queue.put((m, message))
 
     def _on_error(self, headers, message):
         print("Error: %s, %s" % (headers, message))
-
-    def _emit_processed_message(self, message):
-        for name, (p, q) in self.listeners.items():
-            q.put(message)
 
     def _on_local_error(self, error):
         print("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ Caught Message Error in Client Thread +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
