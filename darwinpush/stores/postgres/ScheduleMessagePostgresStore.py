@@ -20,7 +20,11 @@ class ScheduleMessagePostgresStore(BasePostgresStore):
             ("charter", "boolean"),
             ("cancel_reason_code", "integer"),
             ("cancel_tiploc", "varchar"),
-            ("cancel_reason_near", "boolean")
+            ("cancel_reason_near", "boolean"),
+            ("reverse_formation", "boolean"),
+            ("late_reason_code", "integer"),
+            ("late_reason_tiploc", "varchar"),
+            ("late_reason_near", "boolean"),
     ])
     
     table_schedule_location_name = "schedule_location"
@@ -40,6 +44,46 @@ class ScheduleMessagePostgresStore(BasePostgresStore):
             ("working_pass_time", "timestamp with time zone"),
             ("public_departure_time", "timestamp with time zone"),
             ("working_departure_time", "timestamp with time zone"),
+            ("raw_working_arrival_time", "time"),
+            ("raw_public_arrival_time", "time"),
+            ("raw_working_pass_time", "time"),
+            ("raw_public_departure_time", "time"),
+            ("raw_working_departure_time", "time"),
+            ("suppressed", "boolean"),
+            ("length", "varchar"),
+            ("detach_front", "boolean"),
+            ("platform_suppressed", "boolean"),
+            ("platform_suppressed_by_cis", "boolean"),
+            ("platform_source", "varchar"),
+            ("platform_confirmed", "boolean"),
+            ("platform_number", "varchar"),
+            ("forecast_arrival_estimated_time", "time with time zone"),
+            ("forecast_arrival_working_estimated_time", "time with time zone"),
+            ("forecast_arrival_actual_time", "time with time zone"),
+            ("forecast_arrival_actual_time_reomved", "boolean"),
+            ("forecast_arrival_manual_estimate_lower_limit_minutes", "integer"),
+            ("forecast_arrival_manual_estimate_unknown_delay", "boolean"),
+            ("forecast_arrival_unknown_delay", "boolean"),
+            ("forecast_arrival_source", "varchar"),
+            ("forecast_arrival_source_cis", "varchar"),
+            ("forecast_departure_estimated_time", "time with time zone"),
+            ("forecast_departure_working_estimated_time", "time with time zone"),
+            ("forecast_departure_actual_time", "time with time zone"),
+            ("forecast_departure_actual_time_reomved", "boolean"),
+            ("forecast_departure_manual_estimate_lower_limit_minutes", "integer"),
+            ("forecast_departure_manual_estimate_unknown_delay", "boolean"),
+            ("forecast_departure_unknown_delay", "boolean"),
+            ("forecast_departure_source", "varchar"),
+            ("forecast_departure_source_cis", "varchar"),
+            ("forecast_pass_estimated_time", "time with time zone"),
+            ("forecast_pass_working_estimated_time", "time with time zone"),
+            ("forecast_pass_actual_time", "time with time zone"),
+            ("forecast_pass_actual_time_reomved", "boolean"),
+            ("forecast_pass_manual_estimate_lower_limit_minutes", "integer"),
+            ("forecast_pass_manual_estimate_unknown_delay", "boolean"),
+            ("forecast_pass_unknown_delay", "boolean"),
+            ("forecast_pass_source", "varchar"),
+            ("forecast_pass_source_cis", "varchar"),
     ])
 
     def __init__(self, connection):
@@ -47,17 +91,17 @@ class ScheduleMessagePostgresStore(BasePostgresStore):
 
         self.insert_schedule_query = "INSERT into {} ({}) VALUES({})".format(
                 self.table_schedule_name,
-                ", ".join(["{}".format(k) for k, v in self.table_schedule_fields.items()]),
-                ", ".join(["%s" for n in range(0, len(self.table_schedule_fields))]))
+                ", ".join(["{}".format(k) for k, v in list(self.table_schedule_fields.items())[0:14]]),
+                ", ".join(["%s" for n in range(0, 14)]))
         
         self.insert_schedule_location_query = "INSERT into {} ({}) VALUES({})".format(
                 self.table_schedule_location_name,
-                ", ".join(["{}".format(k) for k, v in list(self.table_schedule_location_fields.items())[1:]]),
-                ", ".join(["%s" for n in range(1, len(self.table_schedule_location_fields))]))
+                ", ".join(["{}".format(k) for k, v in list(self.table_schedule_location_fields.items())[1:20]]),
+                ", ".join(["%s" for n in range(0, 19)]))
 
         self.update_schedule_query = "UPDATE {} SET {} WHERE {}".format(
                 self.table_schedule_name,
-                ", ".join(["{}=%s".format(k) for k, v in list(self.table_schedule_fields.items())[1:]]),
+                ", ".join(["{}=%s".format(k) for k, v in list(self.table_schedule_fields.items())[1:14]]),
                 "rid=%s")
 
     def create_tables(self):
@@ -81,7 +125,8 @@ class ScheduleMessagePostgresStore(BasePostgresStore):
         cursor = self.connection.cursor()
 
         cursor.execute("SELECT rid FROM schedule WHERE rid=%s", (message.rid,));
-        print(cursor.rowcount)
+
+        print("*** Saving Schedule Message.")
 
         # Check if this is a new Schedule.
         if cursor.rowcount == 0:
@@ -118,6 +163,7 @@ class ScheduleMessagePostgresStore(BasePostgresStore):
                 message.cancel_reason_near,
                 message.rid
             ))
+           # FIXME: Save forecast components before deleting...
            cursor.execute("DELETE from {} WHERE rid=%s".format(self.table_schedule_location_name), (message.rid,));
         i = 0
         for p in message.all_points:
@@ -132,14 +178,20 @@ class ScheduleMessagePostgresStore(BasePostgresStore):
                 p.false_tiploc,
                 p.route_delay,
                 p.working_arrival_time,
-                p.public_departure_time,
+                p.public_arrival_time,
                 p.working_pass_time,
                 p.public_departure_time,
-                p.working_departure_time
+                p.working_departure_time,
+                p.raw_working_arrival_time,
+                p.raw_public_arrival_time,
+                p.raw_working_pass_time,
+                p.raw_public_departure_time,
+                p.raw_working_departure_time,
             ))
             i += 1
         
         self.connection.commit()
+        cursor.close()
 
     def point_type(self, p):
         if type(p) == Origin:

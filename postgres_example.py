@@ -1,5 +1,5 @@
 from darwinpush import Client, Listener
-from darwinpush.stores.postgres import PostgresConnection, ScheduleMessagePostgresStore
+from darwinpush.stores.postgres import PostgresConnection, ScheduleMessagePostgresStore, TrainStatusMessagePostgresStore
 
 import os
 import time
@@ -15,10 +15,13 @@ class PostgresListener(Listener):
         self.connection.connect()
 
         self.schedule_store = ScheduleMessagePostgresStore(self.connection)
+        self.train_status_store = TrainStatusMessagePostgresStore(self.connection)
 
     def on_schedule_message(self, message):
-        print("SCHEDULE MESSAGE")
         self.schedule_store.save_schedule_message(message)
+
+    def on_train_status_message(self, message):
+        self.train_status_store.save_train_status_message(message)
 
 
 connection = PostgresConnection(host=os.environ["POSTGRES_HOST"],
