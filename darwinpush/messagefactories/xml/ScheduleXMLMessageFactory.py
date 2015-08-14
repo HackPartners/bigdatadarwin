@@ -30,7 +30,14 @@ class ScheduleXMLMessageFactory:
             m.charter = bool(raw.charter)
         except AttributeError:
             m.charter = False
-        m.cancel_reason = raw.cancelReason
+        if raw.cancelReason is not None:
+            m.cancel_reason_code = raw.cancelReason.value()
+            m.cancel_reason_tiploc = raw.cancelReason.tiploc
+            m.cancel_reason_near = bool(raw.cancelReason.near)
+        else:
+            m.cancel_reason_code = None
+            m.cancel_reason_tiploc = None
+            m.cancel_reason_near = None
 
         # Loop through all the points in the order they appear in the XML, instantiate the
         # appropriate object for them, and add them to the appropriate list.
@@ -90,6 +97,10 @@ class ScheduleXMLMessageFactory:
         for p in m.all_points:
             day_incrementor = f.build_times(day_incrementor, o, p, m.start_date, tz)
             o = p
+
+        m._raw = raw
+        m._containing_message = containing_message
+        m._xml = xml
 
         return m
 

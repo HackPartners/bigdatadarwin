@@ -20,15 +20,19 @@ class MyListener(Listener):
         #if message.passenger_service is False:
         #    print("^^^^^^^^^^^^ Passenger Service: False ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
         #    print(message.xml)
+        if message.cancel_reason is not None:
+            print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& CANCEL REASON NOT NONE &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+            print(message.cancel_reason)
+            print(message._xml)
         if message.active is False:
             print("^^^^^^^^^^^^ Active: False ^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-            print(message.xml)
+            print(message._xml)
         #if message.cancel_reason is not None:
         #    print("^^^^^^^^^^^^ Cancel Reason not null ^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
         #    print(message.xml)
         if message.charter is True:
             print("^^^^^^^^^^^^^^ Charter ^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-            print(message.xml)
+            print(message._xml)
         #print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
         
         #print(message.xml)
@@ -94,10 +98,11 @@ class MyListener(Listener):
             # print(message.xml.decode("utf-8"))
             # print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
             if message.late_reason.tiploc is not None:
-                print("!£$%^&*()!£$%^&*(!£$%^&*()£$%^&*()$%^&*()£$%^&*()£$%^&*()")
-                print("{} -- {}".format(message.late_reason.tiploc, message.late_reason.near))
-                print(message._xml)
-                print("====================================================")
+                #print("!£$%^&*()!£$%^&*(!£$%^&*()£$%^&*()$%^&*()£$%^&*()£$%^&*()")
+                #print("{} -- {}".format(message.late_reason.tiploc, message.late_reason.near))
+                #print(message._xml)
+                #print("====================================================")
+                pass
         pass
 
 

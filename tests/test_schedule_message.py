@@ -38,7 +38,9 @@ class TestScheduleMessage:
         assert(True is m.active)
         assert(False is m.deleted)
         assert(False is m.charter)
-        assert(None is m.cancel_reason)
+        assert(None is m.cancel_reason_code)
+        assert(None is m.cancel_reason_tiploc)
+        assert(None is m.cancel_reason_near)
 
         # Check the size of the list properties.
         assert(1 == len(m.origins))
@@ -125,7 +127,9 @@ class TestScheduleMessage:
         assert(True is m.active)
         assert(False is m.deleted)
         assert(False is m.charter)
-        assert(None is m.cancel_reason)
+        assert(None is m.cancel_reason_code)
+        assert(None is m.cancel_reason_tiploc)
+        assert(None is m.cancel_reason_near)
 
         # Check the size of the list properties.
         assert(1 == len(m.origins))
@@ -272,7 +276,9 @@ class TestScheduleMessage:
         assert(True is m.active)
         assert(False is m.deleted)
         assert(False is m.charter)
-        assert(None is m.cancel_reason)
+        assert(None is m.cancel_reason_code)
+        assert(None is m.cancel_reason_tiploc)
+        assert(None is m.cancel_reason_near)
 
         # Check the size of the list properties.
         assert(0 == len(m.origins))
@@ -400,9 +406,34 @@ class TestScheduleMessage:
         # Need an example of a ScheduleMessage that is a charter train.
         assert(False)
 
-    @pytest.mark.xfail
     def test_schedule_message_cancel_reason(self):
-        # Need an example of a ScheduleMessage that has a cancel reason.
-        assert(False)
+        m = self.get_schedule_message_from_file("tests/data/schedule_message__cancel_reason.xml")
+        assert(m is not None)
+
+        # Check the basic message properties.
+        assert("P40670" == m.uid)
+        assert("201508093494345" == m.rid)
+        assert("1W37" == m.headcode)
+        assert(datetime.date(2015, 8, 9) == m.start_date)
+        assert("AW" == m.toc_code)
+        assert(True is m.passenger_service)
+        assert("P" == m.status)
+        assert("XX" == m.category)
+        assert(True is m.active)
+        assert(False is m.deleted)
+        assert(False is m.charter)
+        assert(120 == m.cancel_reason_code)
+        assert(None is m.cancel_reason_tiploc)
+        assert(False is m.cancel_reason_near)
+
+        # Check the size of the list properties.
+        assert(2 == len(m.origins))
+        assert(0 == len(m.operational_origins))
+        assert(8 == len(m.intermediate_points))
+        assert(0 == len(m.operational_intermediate_points))
+        assert(16 == len(m.passing_points))
+        assert(1 == len(m.destinations))
+        assert(0 == len(m.operational_destinations))
+
 
 
