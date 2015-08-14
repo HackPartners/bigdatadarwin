@@ -71,12 +71,29 @@ class TrainStatusMessagePostgresStore(BasePostgresStore):
                 ))
                 if cursor.rowcount == 0:
                     print("   --- 0 Matching Schedule locations found.")
+                    # TODO: Figure out wtf is the cause of this.
                     pass
                 elif cursor.rowcount == 1:
                     #print("   +++ 1 Matching Schedule location found.")
+                    # TODO: Calculate the time. We do this by selecting the first schedule_location
+                    #       of the schedule this location is part of (do this outside the loop to
+                    #       avoid spurious queries) and using that and the start_date to figure out
+                    #       the timezone which should be applied to all times.
+                    #
+                    #       Next we compare the raw times from the status message and the schedule
+                    #       location record to work out if we have gone forward or backward in time
+                    #       and if the date has changed, as per the Darwin rules on the wiki.
+                    #
+                    #       Then we should be able to infer the actual UTC time and the appropriate
+                    #       date to apply to all the forecast times, and can then save them to
+                    #       the database.
                     pass
                 else:
                     print("   !!! {} matching schedule locations found.".format(cursor.rowcount))
+                    # TODO: We seem to be getting some duplicate calling points in the database,
+                    #       with exactly the same times and tiplocs. Is this a bug in the Schedule
+                    #       message processing code, or is this a bug in the data, or is there
+                    #       something important in how the data works that I'm missing?
                     pass
 
         self.connection.commit()
