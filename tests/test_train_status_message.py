@@ -7,7 +7,7 @@ import pytest
 
 import darwinpush.xb.pushport as pp
 from darwinpush.messages import TrainStatusMessage
-from darwinpush.messages.TrainStatusMessage import TrainStatusXMLFactory
+from darwinpush.messagefactories.xml import TrainStatusXMLMessageFactory
 
 class TestTrainStatusMessage:
 
@@ -19,7 +19,7 @@ class TestTrainStatusMessage:
             assert(None is not r.uR)
             assert(1 == len(r.uR.TS))
 
-            s = TrainStatusXMLFactory.build(r.uR.TS[0], r, x)
+            s = TrainStatusXMLMessageFactory.build(r.uR.TS[0], r, x)
             return s
 
     def test_train_status_message(self):

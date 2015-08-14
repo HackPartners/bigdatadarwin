@@ -7,7 +7,7 @@ import pytest
 import pytz
 
 import darwinpush.xb.pushport as pp
-from darwinpush.messages import ScheduleMessage
+from darwinpush.messagefactories.xml import ScheduleXMLMessageFactory
 
 class TestScheduleMessage:
     
@@ -19,7 +19,7 @@ class TestScheduleMessage:
             assert(None is not r.uR)
             assert(1 == len(r.uR.schedule))
             
-            s = ScheduleMessage(r.uR.schedule[0], r, x)
+            s = ScheduleXMLMessageFactory.build(r.uR.schedule[0], r, x)
             return s
          
     def test_schedule_message(self):

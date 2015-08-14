@@ -7,402 +7,97 @@ from datetime import datetime, timedelta
 from dateutil.parser import *
 import pytz
 
-class ScheduleLocation:
-
-    def __init__(self, raw):
-        self.raw = raw
-
-    def _build_times(self, day_incrementor, last_location, start_date, tz):
-        # Construct all the date/time objects iteratively, checking for back-in-time movement of
-        # any of them.
-        last_time = None
-        if last_location is not None:
-            last_time = last_location._get_last_time()
-
-        if self.raw_working_arrival_time is not None:
-            t = parse(self.raw_working_arrival_time).time()
-            if last_time is not None:
-                if last_time > t:
-                    day_incrementor += 1
-            d = start_date + timedelta(days=day_incrementor)
-            self._working_arrival_time = tz.localize(datetime.combine(d, t)).astimezone(pytz.utc)
-
-        if self.raw_public_arrival_time is not None:
-            t = parse(self.raw_public_arrival_time).time()
-            if last_time is not None:
-                if last_time > t:
-                    day_incrementor += 1
-            d = start_date + timedelta(days=day_incrementor)
-            self._public_arrival_time = tz.localize(datetime.combine(d, t)).astimezone(pytz.utc)
-
-        if self.raw_working_pass_time is not None:
-            t = parse(self.raw_working_pass_time).time()
-            if last_time is not None:
-                if last_time > t:
-                    day_incrementor += 1
-            d = start_date + timedelta(days=day_incrementor)
-            self._working_pass_time = tz.localize(datetime.combine(d, t)).astimezone(pytz.utc)
-
-        if self.raw_public_departure_time is not None:
-            t = parse(self.raw_public_departure_time).time()
-            if last_time is not None:
-                if last_time > t:
-                    day_incrementor += 1
-            d = start_date + timedelta(days=day_incrementor)
-            self._public_departure_time = tz.localize(datetime.combine(d, t)).astimezone(pytz.utc)
-
-        if self.raw_working_departure_time is not None:
-            t = parse(self.raw_working_departure_time).time()
-            if last_time is not None:
-                if last_time > t:
-                    day_incrementor += 1
-            d = start_date + timedelta(days=day_incrementor)
-            self._working_departure_time = tz.localize(datetime.combine(d, t)).astimezone(pytz.utc)
-
-        # Return the new day_incrementor value.
-        return day_incrementor
-
-    def _get_last_time(self):
-        if self.raw_working_departure_time is not None:
-            return parse(self.raw_working_departure_time).time()
-        elif self.raw_working_pass_time is not None:
-            return parse(self.raw_working_pass_time).time()
-        elif self.raw_working_arrival_time is not None:
-            return parse(self.raw_working_arrival_time).time()
-        else:
-            raise Exception()
-
-    @property
-    def tiploc(self):
-        return self.raw.tpl
-
-    @property
-    def activity_codes(self):
-        return self.raw.act
-
-    @property
-    def planned_activity_codes(self):
-        return self.raw.planAct
-
-    @property
-    def cancelled(self):
-        return bool(self.raw.can)
-
-    @property
-    def false_tiploc(self):
-        try:
-            return self.raw.fd
-        except AttributeError:
-            return None
+class Location:
 
     """
-    A delay value that is implied by a change to the service's route. This value has been added to
-    the forecast lateness of the service at the previous schedule location when calculating the
-    expected lateness of arrival at this location.
+    Attributes
+    ----------
+    route_delay : int
+        A delay value that is implied by a change to the service's route. This value has been added
+        to the forecast lateness of the service at the previous schedule location when calculating
+        the expected lateness of arrival at this location.
     """
-    @property
-    def route_delay(self):
-        try:
-            return self.raw.rdelay
-        except AttributeError:
-            return None
 
-    @property
-    def raw_working_arrival_time(self):
-        try:
-            return self.raw.wta
-        except AttributeError:
-            return None
+    pass
 
-    @property
-    def raw_public_arrival_time(self):
-        try:
-            return self.raw.pta
-        except AttributeError:
-            return None
-
-    @property
-    def raw_working_departure_time(self):
-        try:
-            return self.raw.wtd
-        except AttributeError:
-            return None
-
-    @property
-    def raw_public_departure_time(self):
-        try:
-            return self.raw.ptd
-        except AttributeError:
-            return None
-
-    @property
-    def raw_working_pass_time(self):
-        try:
-            return self.raw.wtp
-        except AttributeError:
-            return None
-    
-    @property
-    def working_arrival_time(self):
-        try:
-            return self._working_arrival_time
-        except AttributeError:
-            return None
-
-    @property
-    def public_arrival_time(self):
-        try:
-            return self._public_arrival_time
-        except AttributeError:
-            return None
-
-    @property
-    def working_departure_time(self):
-        try:
-            return self._working_departure_time
-        except AttributeError:
-            return None
-
-    @property
-    def public_departure_time(self):
-        try:
-            return self._public_departure_time
-        except AttributeError:
-            return None
-
-    @property
-    def working_pass_time(self):
-        try:
-            return self._working_pass_time
-        except AttributeError:
-            return None
-
-
-class Origin(ScheduleLocation):
+class Origin(Location):
     pass
 
 
-class OperationalOrigin(ScheduleLocation):
+class OperationalOrigin(Location):
     pass
 
 
-class IntermediatePoint(ScheduleLocation):
+class IntermediatePoint(Location):
     pass
 
 
-class OperationalIntermediatePoint(ScheduleLocation):
+class OperationalIntermediatePoint(Location):
     pass
 
 
-class PassingPoint(ScheduleLocation):
+class PassingPoint(Location):
     pass
 
 
-class Destination(ScheduleLocation):
+class Destination(Location):
     pass
 
 
-class OperationalDestination(ScheduleLocation):
+class OperationalDestination(Location):
     pass
 
-class ScheduleMessage(BaseMessage):
+class ScheduleMessage:
+    """ Represents a ScheduleMessage.
 
-    def __init__(self, message, containing_message, xml):
-        super().__init__(message, containing_message, xml)
-        self._build_point_lists()
-
-    def _build_point_lists(self):
-        # Loop through all the points in the order they appear in the XML, instantiate the
-        # appropriate object for them, and add them to the appropriate list.
-
-        self._origins = []
-        self._operational_origins = []
-        self._intermediate_points = []
-        self._operational_intermediate_points = []
-        self._passing_points = []
-        self._destinations = []
-        self._operational_destinations = []
-        self._all_points = []
-
-        for r in self.raw.orderedContent():
-            v = r.value
-            if type(v) == DisruptionReasonType:
-                pass
-            elif type(v) == OR:
-                p = Origin(v)
-                self._origins.append(p)
-            elif type(v) == OPOR:
-                p = OperationalOrigin(v)
-                self._operational_origins.append(p)
-            elif type(v) == IP:
-                p = IntermediatePoint(v)
-                self._intermediate_points.append(p)
-            elif type(v) == OPIP:
-                p = OperationalIntermediatePoint(v)
-                self._operational_intermediate_points.append(p)
-            elif type(v) == PP:
-                p = PassingPoint(v)
-                self._passing_points.append(p)
-            elif type(v) == DT:
-                p = Destination(v)
-                self._destinations.append(p)
-            elif type(v) == OPDT:
-                p = OperationalDestination(v)
-                self._operational_destinations.append(p)
-            else:
-                raise Exception("Type of point is {}.".format(type(v)))
-
-            self._all_points.append(p)
-
-        first_point = self._all_points[0]
-        if first_point.raw_working_arrival_time is not None:
-            t = parse(first_point.raw_working_arrival_time).time()
-        elif first_point.raw_working_pass_time is not None:
-            t = parse(first_point.raw_working_pass_time).time()
-        elif first_point.raw_working_departure_time is not None:
-            t = parse(first_point.raw_working_departure_time).time()
-        else:
-            raise Exception()
-
-        tz = timezone_for_date_and_time(self.start_date, t)
-
-        day_incrementor = 0
-        o = None
-        for p in self._all_points:
-            day_incrementor = p._build_times(day_incrementor, o, self.start_date, tz)
-            o = p
+    Attributes
+    ----------
+    uid : string
+        The Network Rail Schedule UID.
+    rid : string
+        The Darwin Push Port RTTI identifier for this schedule. This is the unique identifier for
+        Schedules in the Push Port data.
+    headcode : string
+        The headcode, or trainID.
+    start_date : date
+        The date on which this schedule starts.
+    toc_code : string
+        The two-letter Train Operating Company code for this service.
+    passenger_service : bool
+        True indicates this is a passenger service, otherwise False.
+    status : string
+        The "Status" of the service, ie. bus/ferry/train.
+    category : string
+        The "category" of the service.
+    active : bool
+        True if the schedule has been activated in Darwin, otherwise False.
+    deleted : bool
+        True indicates the service has been deleted in Darwin, and thus should not be shown to end
+        users. This is different from *cancelled* where the service should still be shown to users
+        but indicated as cancelled, whereas a *deleted* service should never be shown at all.
+    charter : bool
+        True indicates that this schedule message describes a charter train. N.b. not all charter
+        trains are present in the Darwin Push Port feed, but those that are will have this
+        property set to True.
+    cancel_reason : int
+        The cancelleation reason code if the service has been cancelled.
+    origins : List of Origin
+        An ordered list of the Origins this service has.
+    operational_origins : List of OperationalOrigin
+        An ordered list of the Operational Origins this service has.
+    intermediate_points : List of IntermediatePoint
+        An ordered list of the Intermediate Points this service has.
+    operational_intermediate_points : List of OperationalIntermediatePoint
+        An ordered list of the Operational Intermediate Points this service has.
+    passing_points : List of PassingPoint
+        An ordered list of the Passing Points this service has.
+    destinations : List of Destination
+        An ordered list of the Destinations this service has.
+    operational_destinations : List of OperationalDestination
+        An ordered list of the Operational Destinations this service has.
 
     """
-    The train UID.
-    """
-    @property
-    def uid(self):
-        return self.raw.uid
 
-    """
-    The RTTI unique train ID.
-    """
-    @property
-    def rid(self):
-        return self.raw.rid
-
-    """
-    The train headcode.
-    """
-    @property
-    def headcode(self):
-        return self.raw.trainId
-
-    """
-    The schedule start date.
-    """
-    @property
-    def start_date(self):
-        return self.raw.ssd.date()
-    
-    """
-    The 2-letter TOC code for the train operating company of this service.
-    """
-    @property
-    def toc_code(self):
-        return self.raw.toc
-        
-    """
-    Boolean indicating whether or not this schedule represents a passenger services.
-    """
-    @property
-    def passenger_service(self):
-        return bool(self.raw.isPassengerSvc)
-
-    """
-    Status of the service, i.e. bus/ferry/train.
-    """
-    @property
-    def status(self):
-        return self.raw.status
-
-    """
-    Category of the service.
-    """
-    @property
-    def category(self):
-        return self.raw.trainCat
-
-    """
-    Indicates whether the schedule has been activated in Darwin.
-    """
-    @property
-    def active(self):
-        return bool(self.raw.isActive)
-
-    """
-    Indicates whether the schedule has been deleted in Darwin.
-    """
-    @property
-    def deleted(self):
-        return bool(self.raw.deleted)
-
-    """
-    Indicates whether the schedule is for a charter service.
-    """
-    @property
-    def charter(self):
-        return bool(self.raw.isCharter)
-
-    """
-    ???
-    """
-    @property
-    def cancel_reason(self):
-        return self.raw.cancelReason
-
-    """
-    Returns a list of the service origins. There can be more than one.
-    """
-    @property
-    def origins(self):
-        return self._origins
-
-    """
-    Returns a list of the serviec operational origins. There can be more than one.
-    """
-    @property
-    def operational_origins(self):
-        return self._operational_origins
-
-    """
-    Returns a list of the intermediate locations on the service.
-    """
-    @property
-    def intermediate_points(self):
-        return self._intermediate_points
-
-    """
-    Returns a list of the operational intermediate locations on the service.
-    """
-    @property
-    def operational_intermediate_points(self):
-        return self._operational_intermediate_points
-
-    """
-    Returns a list of the passing points on the service.
-    """
-    @property
-    def passing_points(self):
-        return self._passing_points
-
-    """
-    Returns a list of the service destinations. There can be more than one.
-    """
-    @property
-    def destinations(self):
-        return self._destinations
-
-    """
-    Returns a list of the operational destinations. There can be more than one.
-    """
-    @property
-    def operational_destinations(self):
-        return self._operational_destinations
+    pass
 
 

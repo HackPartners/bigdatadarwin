@@ -5,6 +5,7 @@ import logging
 log = logging.getLogger("darwinpush")
 
 class Parser:
+
     def __init__(self, q_in, q_out):
         self.q_in = q_in
         self.q_out = q_out
@@ -28,7 +29,7 @@ class Parser:
             # Process SCHEDULE messages.
             for i in r.schedule:
                 log.debug("SCHEDULE message received.")
-                o = ScheduleMessage(i, m, message)
+                o = ScheduleXMLMessageFactory.build(i, m, message)
                 self.q_out.put(o)
 
             # Process DEACTIVATED messages.
