@@ -19,8 +19,9 @@ class MyListener(Listener):
     def on_schedule_message(self, message):
         #if message.passenger_service is False:
         #    print("^^^^^^^^^^^^ Passenger Service: False ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-        #    print(message.xml)
-        if message.cancel_reason is not None:
+        #    print(message._xml)
+        if (hasattr(message, "cancel_reason")
+                and message.cancel_reason is not None):
             print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& CANCEL REASON NOT NONE &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
             print(message.cancel_reason)
             print(message._xml)
@@ -29,13 +30,13 @@ class MyListener(Listener):
             print(message._xml)
         #if message.cancel_reason is not None:
         #    print("^^^^^^^^^^^^ Cancel Reason not null ^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-        #    print(message.xml)
+        #    print(message._xml)
         if message.charter is True:
             print("^^^^^^^^^^^^^^ Charter ^^^^^^^^^^^^^^^^^^^^^^^^^^^")
             print(message._xml)
         #print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
         
-        #print(message.xml)
+        #print(message._xml)
         #for OR in message.origins:
         #    print(OR.tiploc)
         #for OR in message.operational_origins:
@@ -53,41 +54,41 @@ class MyListener(Listener):
         if message.category == AssociationCategory.Next or message.category == AssociationCategory.Join or message.category == AssociationCategory.Split:
             return
         print("***************** Assoc Message: {} *********************************".format(message.category))
-        print(message.xml)
+        print(message._xml)
         print("**********************************************************************************************")
         #if message.category is not AssociationCategory.Next:
         #    print(message.category)
 
     def on_alarm_message(self, message):
         print("===================================== BEGIN: Alarm =================================")
-        print(message.xml)
+        print(message._xml)
         print("===================================== END: Alarm =================================")
 
     def on_station_message(self, message):
         #print("===================================== BEGIN: Station =================================")
-        #print(message.xml)
+        #print(message._xml)
         #print("===================================== END: Station =================================")
         pass
 
     def on_tracking_id_message(self, message):
         print("===================================== BEGIN: Tracking ID =================================")
-        print(message.xml)
+        print(message._xml)
         print("===================================== END: Tracking ID =================================")
 
     def on_train_alert_message(self, message):
         print("===================================== BEGIN: Alert =================================")
-        print(message.xml)
+        print(message._xml)
         print("===================================== END: Alert =================================")
 
     def on_train_order_message(self, message):
         print("===================================== BEGIN: Train Order =================================")
-        print(message.xml)
+        print(message._xml)
         print("===================================== END: Train Order =================================")
 
     def on_train_status_message(self, message):
         #print("Train Status Message Type: {}.".format(type(message.raw)))
         #print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-        #print(message.xml.decode("utf-8"))
+        #print(message._xml.decode("utf-8"))
         #print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")a
         #self.ts_counter += 1
         #if self.ts_counter % 1000 == 0:
@@ -95,7 +96,7 @@ class MyListener(Listener):
         if message.late_reason is not None:
             #print(message.locations)
             # print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-            # print(message.xml.decode("utf-8"))
+            # print(message._xml.decode("utf-8"))
             # print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
             if message.late_reason.tiploc is not None:
                 #print("!£$%^&*()!£$%^&*(!£$%^&*()£$%^&*()$%^&*()£$%^&*()£$%^&*()")
