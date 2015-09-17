@@ -1,1 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?><Pport xmlns="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns3="http://www.thalesgroup.com/rtti/PushPort/Forecasts/v2" ts="2015-08-11T22:01:24.0643111+01:00" version="12.0"><uR requestSource="Auto" updateOrigin="Trust"><TS rid="201508113560355" ssd="2015-08-11" uid="W84968"><ns3:Location tpl="STRENJN" wtp="21:59"><ns3:pass at="22:01" src="TRUST" srcInst="Auto"/></ns3:Location></TS></uR></Pport>
+<?xml version="1.0" encoding="UTF-8"?>
+<Pport ts="2015-08-11T22:01:24.0643111+01:00" version="12.0" xmlns="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns3="http://www.thalesgroup.com/rtti/PushPort/Forecasts/v2">
+    <uR requestSource="Auto" updateOrigin="Trust">
+        <TS rid="201508113560355" ssd="2015-08-11" uid="W84968">
+            <ns3:Location tpl="STRENJN" wtp="21:59">
+                <ns3:pass at="22:01" src="TRUST" srcInst="Auto"/>
+            </ns3:Location>
+        </TS>
+    </uR>
+</Pport>

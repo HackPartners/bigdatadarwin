@@ -1,1 +1,15 @@
-<?xml version="1.0" ?><ns1:Pport ts="2015-08-06T20:12:31.985012Z" version="12.0" xmlns:ns1="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/StationMessages/v1"><ns1:uR updateOrigin="Workstation"><ns1:OW cat="Station" id="52087" sev="0"><ns2:Station crs="HKC"/><ns2:Station crs="HTF"/><ns2:Station crs="KID"/><ns2:Station crs="SED"/><ns2:Station crs="SMA"/><ns2:Msg><ns2:p>The ticket office at this station is currently closed. </ns2:p></ns2:Msg></ns1:OW></ns1:uR></ns1:Pport>
+<?xml version="1.0" ?>
+<ns1:Pport ts="2015-08-06T20:12:31.985012Z" version="12.0" xmlns:ns1="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/StationMessages/v1">
+    <ns1:uR updateOrigin="Workstation">
+        <ns1:OW cat="Station" id="52087" sev="0">
+            <ns2:Station crs="HKC"/>
+            <ns2:Station crs="HTF"/>
+            <ns2:Station crs="KID"/>
+            <ns2:Station crs="SED"/>
+            <ns2:Station crs="SMA"/>
+            <ns2:Msg>
+                <ns2:p>The ticket office at this station is currently closed. </ns2:p>
+            </ns2:Msg>
+        </ns1:OW>
+    </ns1:uR>
+</ns1:Pport>

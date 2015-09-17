@@ -1,1 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><Pport xmlns="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/Schedules/v1" ts="2015-08-09T16:40:00.4582549+01:00" version="12.0"><uR updateOrigin="Darwin"><schedule isPassengerSvc="false" rid="201508093490803" ssd="2015-08-09" toc="GR" trainCat="EE" trainId="5S23" uid="Y58074"><ns2:OPOR act="TB" tpl="EDINBUR" wtd="20:40"/><ns2:PP tpl="ABHLJN" wtp="20:42"/><ns2:OPIP act="OP" tpl="CRGNTYJ" wta="20:44" wtd="20:44:30"/><ns2:OPDT act="TF" tpl="CRGNTNY" wta="20:48"/></schedule></uR></Pport>
+<?xml version="1.0" encoding="UTF-8"?>
+<Pport ts="2015-08-09T16:40:00.4582549+01:00" version="12.0" xmlns="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/Schedules/v1">
+    <uR updateOrigin="Darwin">
+        <schedule isPassengerSvc="false" rid="201508093490803" ssd="2015-08-09" toc="GR" trainCat="EE" trainId="5S23" uid="Y58074">
+            <ns2:OPOR act="TB" tpl="EDINBUR" wtd="20:40"/>
+            <ns2:PP tpl="ABHLJN" wtp="20:42"/>
+            <ns2:OPIP act="OP" tpl="CRGNTYJ" wta="20:44" wtd="20:44:30"/>
+            <ns2:OPDT act="TF" tpl="CRGNTNY" wta="20:48"/>
+        </schedule>
+    </uR>
+</Pport>

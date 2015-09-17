@@ -1,1 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?><Pport xmlns:tom="http://www.thalesgroup.com/rtti/PushPort/TrainOrder/v1" xmlns:ct="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" ts="2015-05-28T14:44:32.2449838+01:00" version="12.0" xmlns="http://www.thalesgroup.com/rtti/PushPort/v12"><uR updateOrigin="CIS" requestSource="AM01" requestID="AM01008918"><trainOrder tiploc="EPSM" crs="EPS" platform="1"><tom:set><tom:first><tom:rid wtd="14:49" ptd="14:49">201505281285618</tom:rid></tom:first></tom:set></trainOrder></uR></Pport>
+<?xml version="1.0" encoding="utf-8"?>
+<Pport ts="2015-05-28T14:44:32.2449838+01:00" version="12.0" xmlns="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ct="http://www.thalesgroup.com/rtti/PushPort/CommonTypes/v1" xmlns:tom="http://www.thalesgroup.com/rtti/PushPort/TrainOrder/v1">
+    <uR requestID="AM01008918" requestSource="AM01" updateOrigin="CIS">
+        <trainOrder crs="EPS" platform="1" tiploc="EPSM">
+            <tom:set>
+                <tom:first>
+                    <tom:rid ptd="14:49" wtd="14:49">201505281285618</tom:rid>
+                </tom:first>
+            </tom:set>
+        </trainOrder>
+    </uR>
+</Pport>

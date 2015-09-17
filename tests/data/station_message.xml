@@ -1,1 +1,9 @@
-<?xml version="1.0" ?><ns1:Pport ts="2015-08-04T09:55:17.553843Z" version="12.0" xmlns:ns1="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/StationMessages/v1"><ns1:uR updateOrigin="Workstation"><ns1:OW cat="Station" id="51504" sev="1"><ns2:Station crs="BSK"/><ns2:Msg>The lifts on platforms 2 and 3 at Basingstoke will be out of use until at least September 2015. </ns2:Msg></ns1:OW></ns1:uR></ns1:Pport>
+<?xml version="1.0" ?>
+<ns1:Pport ts="2015-08-04T09:55:17.553843Z" version="12.0" xmlns:ns1="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/StationMessages/v1">
+    <ns1:uR updateOrigin="Workstation">
+        <ns1:OW cat="Station" id="51504" sev="1">
+            <ns2:Station crs="BSK"/>
+            <ns2:Msg>The lifts on platforms 2 and 3 at Basingstoke will be out of use until at least September 2015. </ns2:Msg>
+        </ns1:OW>
+    </ns1:uR>
+</ns1:Pport>

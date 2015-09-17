@@ -13,6 +13,7 @@ class Parser:
     def run(self):
         while True:
             (m, message) = self.q_in.get()
+
             # We aren't ever expecting the Snapshot Record component to contain anything.
             if m.sR is not None:
                 print("o.O.o.O Snapshot record is not none.")
@@ -64,8 +65,8 @@ class Parser:
 
             # Process TRAINORDER messages.
             for i in r.trainOrder:
-                log.deug("TRAINORDER message received.")
-                TrainOrderMessage(i, m, message)
+                log.debug("TRAINORDER message received.")
+                o = TrainOrderMessage(i, m, message)
                 self.q_out.put(o)
 
             # Process TRACKINGID messages.

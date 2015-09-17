@@ -1,1 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><Pport xmlns="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/Schedules/v1" ts="2015-08-08T10:26:08.923598+01:00" version="12.0"><uR requestID="0000000000004212" requestSource="at02" updateOrigin="CIS"><association category="NP" tiploc="RDIT"><ns2:main pta="13:41" rid="201508083459327" wta="13:40"/><ns2:assoc ptd="13:55" rid="201508083458157" wtd="13:55"/></association></uR></Pport>
+<?xml version="1.0" encoding="UTF-8"?>
+<Pport ts="2015-08-08T10:26:08.923598+01:00" version="12.0" xmlns="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/Schedules/v1">
+    <uR requestID="0000000000004212" requestSource="at02" updateOrigin="CIS">
+        <association category="NP" tiploc="RDIT">
+            <ns2:main pta="13:41" rid="201508083459327" wta="13:40"/>
+            <ns2:assoc ptd="13:55" rid="201508083458157" wtd="13:55"/>
+        </association>
+    </uR>
+</Pport>

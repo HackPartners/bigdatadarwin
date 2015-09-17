@@ -1,5 +1,7 @@
 from darwinpush.messages import *
 
+f = open('stream.xml','w')
+
 class Listener:
     def __init__(self, q):
         print("Initialising Listener")
