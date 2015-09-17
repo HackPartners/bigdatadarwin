@@ -143,23 +143,23 @@ ACTION_TYPE = (
 )
 
 class TrainOrderItem(DarwinModel):
-    rid                 = CharField()   
-    headcode            = CharField(null=True) 
+    rid                 = CharField()
+    headcode            = CharField(null=True)
     working_arrival     = TimeField(null=True)
     working_departure   = TimeField(null=True)
     working_pass        = TimeField(null=True)
     public_arrival      = TimeField(null=True)
-    public_departure    = TimeField(null=True)  
+    public_departure    = TimeField(null=True)
     created             = DateTimeField(default=datetime.datetime.now)
 
 class TrainOrder(DarwinModel):
     action              = CharField(choices=ACTION_TYPE)
-    tiploc              = CharField()   
-    crs                 = CharField(max_length=3)   
-    platform            = CharField()   
-    first               = ForeignKeyField(TrainOrderItem, related_name="first_set", null=True)   
-    second              = ForeignKeyField(TrainOrderItem, related_name="second_set", null=True)   
-    third               = ForeignKeyField(TrainOrderItem, related_name="third_set", null=True) 
+    tiploc              = CharField()
+    crs                 = CharField(max_length=3)
+    platform            = CharField()
+    first               = ForeignKeyField(TrainOrderItem, related_name="first_set", null=True)
+    second              = ForeignKeyField(TrainOrderItem, related_name="second_set", null=True)
+    third               = ForeignKeyField(TrainOrderItem, related_name="third_set", null=True)
     created             = DateTimeField(default=datetime.datetime.now)
 
 
@@ -171,9 +171,9 @@ ALARM_TYPE = (
 )
 
 class Alarm(DarwinModel):
-    action              = CharField(choices=ACTION_TYPE)   
-    type                = CharField(choices=ALARM_TYPE)   
-    aid                 = CharField()   
+    action              = CharField(choices=ACTION_TYPE)
+    type                = CharField(choices=ALARM_TYPE)
+    aid                 = CharField()
     created             = DateTimeField(default=datetime.datetime.now)
 
 
@@ -196,11 +196,11 @@ STATION_SEVERITY = (
 )
 
 class Station(DarwinModel):
-    stations            = ArrayField(CharField)   
-    message             = TextField()   
-    smid                = CharField()   
-    category            = CharField(choices=STATION_CATEGORY)   
-    severity            = CharField(choices=STATION_SEVERITY)   
+    stations            = ArrayField(CharField)
+    message             = TextField()
+    smid                = CharField()
+    category            = CharField(choices=STATION_CATEGORY)
+    severity            = CharField(choices=STATION_SEVERITY)
     created             = DateTimeField(default=datetime.datetime.now)
 
 ########################################################################
@@ -217,9 +217,7 @@ def create_all_tables(safe=True):
             AssociationService,
             Association,
             TrainOrderItem,
-            TrainOrder, 
+            TrainOrder,
             Station,
             Alarm
         ], safe)
- 
- 
