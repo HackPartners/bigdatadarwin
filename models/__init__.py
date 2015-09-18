@@ -2,8 +2,13 @@ from peewee import *
 from playhouse.postgres_ext import *
 
 import datetime
+import os
 
-db = PostgresqlDatabase('darwin_push_db', user='hackpartner', password='hackpartnerspass')
+db_user = os.getenv("DARWINPUSH_DBUSER", "hackpartner")
+db_pass = os.getenv("DARWINPUSH_DBPASS", "")
+db_name = os.getenv("DARWINPUSH_DBNAME", "darwin_push_db")
+
+db = PostgresqlDatabase(db_name, user=db_user, password=db_name)
 db.connect()
 
 class DarwinModel(Model):
