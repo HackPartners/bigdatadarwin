@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <links xmlns="http://titanium.dstc.edu.au/xml/xs3p">
-  <!-- This file is a requirement but seems to be pretty much ignored anyway. -->
   <schema xmlns="" file-location="rttiPPTStatus_v1.xsd" docfile-location="rttiPPTStatus_v1.xsd.html"/>
   <schema xmlns="" file-location="rttiPPTCommonTypes_v1.xsd" docfile-location="rttiPPTCommonTypes_v1.xsd.html"/>
   <schema xmlns="" file-location="rttiPPTSchedules_v1.xsd" docfile-location="rttiPPTSchedules_v1.xsd.html"/>
