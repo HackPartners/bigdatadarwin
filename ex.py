@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from darwinpush import Client, Listener
 from darwinpush.messages.AssociationMessage import AssociationCategory
 from models import *
