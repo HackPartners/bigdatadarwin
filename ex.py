@@ -6,8 +6,6 @@ import os
 import queue
 import time
 
-create_all_tables()
-
 class MyListener(Listener):
     def __init__(self, q):
         print("Setting Up")
@@ -47,7 +45,7 @@ class MyListener(Listener):
             p.type = str(type(o))
             p.save()
         pass
-        
+
 
     @db.transaction()
     def on_deactivated_message(self, message):
@@ -105,7 +103,7 @@ class MyListener(Listener):
     @db.transaction()
     def on_train_order_message(self, message):
         print("^^^^^^^^^^^^ TRAIN ORDER!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-        
+
         first = None
         second = None
         third = None
@@ -117,7 +115,7 @@ class MyListener(Listener):
         if message.second:
             second = build_train_order_item(message.second)
             second.save()
-        
+
         if message.third:
             third = build_train_order_item(message.third)
             third.save()
@@ -164,11 +162,11 @@ class MyListener(Listener):
             f_pass = None
 
             if location.forecast_arrival_time:
-                f_arrival = build_forecast(location.forecast_arrival_time) 
+                f_arrival = build_forecast(location.forecast_arrival_time)
                 f_arrival.save()
 
             if location.forecast_departure_time:
-                f_departure = build_forecast(location.forecast_departure_time) 
+                f_departure = build_forecast(location.forecast_departure_time)
                 f_departure.save()
 
             if location.forecast_pass_time:
@@ -240,17 +238,20 @@ def build_train_order_item(train_order):
     to.public_departure = train_order.public_departure_time
     return to
 
-# Instantiate the Push Port client.
-client = Client(os.environ["STOMP_USER"],
-                os.environ["STOMP_PASS"],
-                os.environ["STOMP_QUEUE"],
-                MyListener)
+# Make this file importable for debugging
 
-# Connect the Push Port client.
-client.connect()
+if __name__ == "__main__":
+    create_all_tables()
 
-# Keep the main thread running indefinitely while we receive messages.
-while True:
-    time.sleep(1)
+    # Instantiate the Push Port client.
+    client = Client(os.environ["STOMP_USER"],
+                    os.environ["STOMP_PASS"],
+                    os.environ["STOMP_QUEUE"],
+                    MyListener)
 
+    # Connect the Push Port client.
+    client.connect()
 
+    # Keep the main thread running indefinitely while we receive messages.
+    while True:
+        time.sleep(1)
