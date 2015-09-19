@@ -178,7 +178,7 @@ ALARM_TYPE = (
 class Alarm(DarwinModel):
     action              = CharField(choices=ACTION_TYPE)
     type                = CharField(choices=ALARM_TYPE)
-    aid                 = CharField()
+    aid                 = CharField(null=True)
     created             = DateTimeField(default=datetime.datetime.now)
 
 
