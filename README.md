@@ -1,44 +1,27 @@
-[![Build Status](https://travis-ci.org/fasteroute/darwinpush.svg?branch=master)](https://travis-ci.org/fasteroute/darwinpush) [![Documentation Status](https://readthedocs.org/projects/darwinpush/badge/?version=latest)](https://readthedocs.org/projects/darwinpush/?badge=latest)
+[![powered by National Rail Enquiries](http://www.xcitybrum.co.uk/Content/images/poweredby.png)](http://www.nationalrail.co.uk/100296.aspx)
 
-# darwinpush
+[![Build Status](https://drone.io/github.com/HackPartners/darwinrest/status.png)](https://drone.io/github.com/HackPartners/darwinrest/latest)
 
-A python library for the National Rail Enquiries Darwin Push Port API. The purpose of this library
-is to simplify developing python programs that make use of the Darwin Push Port API by taking care
-of all the low level STOMP usage and allowing you just to write a listener class which receives
-friendly, easy to use objects representing the different message types the Push Port sends out,
-avoiding the need for dealing with a STOMP library and low-level bindings of the XML data received.
+## Overview
 
-*This library is still in its early stages of development and so a lot of it is incomplete or not
-safe to rely on yet. Use at your own risk.*
-
-## Current state of development:
-* The core STOMP client and message handling code is in place, although lacks proper connection
-  management and error handling.
-
-* The generated bindings for the Darwin XSDs are in place.
-
-* The implementation of the friendly message classes is mostly complete. All of the message types except for the following are implemented, with some reasonable level of test coverage (although some rarer properties are not fully tested yet).
-  * Train Status
-  * Tracking ID (appears to be not yet in use in public Darwin)
-  * Train Alert (appears to be not yet in use in public Darwin)
-
-## How To Use
-Devlopment is still in its early stages, so there's no easy "How To" just yet. If that's what you
-are looking for, your best bet is probably to check back in a month or two once the project has
-progressed a bit further. If that hasn't put you off though, you can see some vague clues as to
-how to get started in example.py.
-
-## Help
-I can't really offer much in the way of support right now, because the library isn't finished!
-
-## I want to Get Involved
-Patches are welcome! However, given the early state of development, it's probably best to get in
-touch with me before you start hacking on something to avoid duplication of work, or incompatible
-changes.
-
-## Release Roadmap
-I'm aiming for a release that's pretty much usable for pretty much all the common cases by the end
-of August 2015. However, my hacking priorities can change rapidly without warning, so don't consider
-this to be guaranteed by any means.
+* This codebase allows developers to get started with the Darwin Push
+* The code is open source and is available on the [Hack Partners Github](https://github.com/HackPartners/darwinrest) 
+* The API Docs for the Darwin REST API can be found at [darwin.hacktrain.com](http://darwin.hacktrain.com). 
+* For more information about the DARWIN APIs you can visit the [National Rail Enquiries documentation](http://www.nationalrail.co.uk/46391.aspx)
 
 
+## The TrainHackers (Contributors)
+
+The HackTrain team has open sourced this project, and the active contributors to this project include:
+* Alejandro Saucedo
+* Vlad Velici
+
+
+## Motivation
+
+Our vision is to bring innovation to the railway industry, and the first step to achieve this is making the current masses of data available in the industry, easy to access and process. For this reason the HackTrain team has decided to create this open source project to expose a standardized REST API for the Darwin API. This project will be maintained by the community for the community.
+
+
+## License
+
+This project is registered under the Apache 2.0 licence. View the LICENCE file for more details.
