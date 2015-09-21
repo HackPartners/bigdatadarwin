@@ -9,9 +9,9 @@ import queue
 import time
 
 class MyListener(Listener):
-    def __init__(self, q):
+    def __init__(self, q, quit):
         print("Setting Up")
-        super().__init__(q)
+        super().__init__(q, quit)
 
     @db.transaction()
     def on_schedule_message(self, m):
