@@ -242,14 +242,21 @@ def build_train_order_item(train_order):
 
 # Make this file importable for debugging
 
+class HPClient(Client):
+    def on_disconnected(self):
+        self.reconnect(retries=0, delay=10) # try to reconnect forever
+
 if __name__ == "__main__":
     create_all_tables()
 
     # Instantiate the Push Port client.
-    client = Client(os.environ["STOMP_USER"],
+    client = HPClient(os.environ["STOMP_USER"],
                     os.environ["STOMP_PASS"],
                     os.environ["STOMP_QUEUE"],
                     MyListener)
+
+    # Disable default reconnection attempts of Client
+    client.auto_retry = False
 
     # Connect the Push Port client.
     client.connect()
@@ -262,4 +269,3 @@ if __name__ == "__main__":
         print("Disconnecting client...")
         client.disconnect()
         print("Bye")
-
