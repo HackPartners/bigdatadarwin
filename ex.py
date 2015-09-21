@@ -254,6 +254,12 @@ if __name__ == "__main__":
     # Connect the Push Port client.
     client.connect()
 
-    # Keep the main thread running indefinitely while we receive messages.
-    while True:
-        time.sleep(1)
+    print("Connected")
+    try:
+        while True:
+            time.sleep(1)
+    except (KeyboardInterrupt, SystemExit):
+        print("Disconnecting client...")
+        client.disconnect()
+        print("Bye")
+
