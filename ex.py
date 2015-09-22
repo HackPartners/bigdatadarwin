@@ -16,9 +16,30 @@ class MyListener(Listener):
     @db.transaction()
     def on_schedule_message(self, m):
         print("^^^^^^^^^^^^ SCHEDULE!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-        s = Schedule()
-        s.uid = m.uid
-        s.rid = m.rid
+        
+        # We try to find a schedule, and replace it if we do
+        found = (Schedule
+                .select()
+                .where(
+                    Schedule.uid == m.uid,
+                    Schedule.rid == m.rid
+                ))
+
+        count = found.count()
+        if count > 0:
+            assert(count == 1)
+            s = found[0]
+            # Removing all relevant calling points
+            (CallingPoint
+                .delete()
+                .where(
+                    CallingPoint.schedule_id == s.id
+                ))
+        else:
+            s = Schedule()
+            s.uid = m.uid
+            s.rid = m.rid
+
         s.headcode = m.headcode
         s.start_date = m.start_date
         s.toc_code = m.toc_code
@@ -46,6 +67,7 @@ class MyListener(Listener):
             p.public_departure = o.raw_public_departure_time
             p.type = str(type(o))
             p.save()
+
         pass
 
 

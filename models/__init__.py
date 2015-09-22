@@ -137,7 +137,7 @@ class Association(DarwinModel):
     associated_service  = ForeignKeyField(AssociationService, related_name="associated_service_set")
     tiploc              = CharField()
     category            = CharField(choices=ASSOCIATION_TYPE)
-    cancelled           = BooleanField()
+    cancelled           = BooleanField(null=True, default=False)
     deleted             = BooleanField()
     created             = DateTimeField(default=datetime.datetime.now)
 
