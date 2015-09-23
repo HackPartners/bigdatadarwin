@@ -16,7 +16,7 @@ class MyListener(Listener):
     @db.transaction()
     def on_schedule_message(self, m):
         print("^^^^^^^^^^^^ SCHEDULE!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-        
+
         # We try to find a schedule, and replace it if we do
         found = (Schedule
                 .select()
@@ -29,12 +29,14 @@ class MyListener(Listener):
         if count > 0:
             assert(count == 1)
             s = found[0]
+
+            print("Removing calling points")
+
             # Removing all relevant calling points
-            (CallingPoint
-                .delete()
-                .where(
-                    CallingPoint.schedule_id == s.id
-                ))
+            CallingPoint.delete().where(
+                CallingPoint.schedule == s
+            ).execute()
+
         else:
             s = Schedule()
             s.uid = m.uid
