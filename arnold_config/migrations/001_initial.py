@@ -1,11 +1,14 @@
 from peewee import *
+from .. import database as db
 from playhouse.postgres_ext import *
 
 import datetime
-import os
 
-from models.database import db
-db.connect()
+# Copy of the models
+
+# Because we want the first migration to be the same for all our setups,
+# we copy the initial models here instead of importing whatever is the current
+# model at the time of applying the migrations.
 
 class DarwinModel(Model):
     """A base model that will use our Postgres database"""
@@ -204,6 +207,28 @@ class Station(DarwinModel):
     severity            = CharField(choices=STATION_SEVERITY)
     created             = DateTimeField(default=datetime.datetime.now)
 
-########################################################################
 
-# Run the migrations to create all tables.
+# Migration
+
+all_tables = [
+    Location,
+    TrainStatus,
+    LateReason,
+    Platform,
+    Forecast,
+    CallingPoint,
+    Schedule,
+    DeactivatedSchedule,
+    AssociationService,
+    Association,
+    TrainOrderItem,
+    TrainOrder,
+    Station,
+    Alarm
+];
+
+def up():
+    db.create_tables(all_tables, safe=True)
+
+def down():
+    db.drop_tables(all_tables)
