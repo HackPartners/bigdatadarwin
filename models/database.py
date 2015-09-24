@@ -5,11 +5,18 @@ Good part is that we can alter the `db` variable as long as we don't import
 other things that connect to the database before that.
 """
 
-from peewee import PostgresqlDatabase
 import os
+from playhouse.db_url import connect
+import sys
 
-db_user = os.getenv("DARWINPUSH_DBUSER", "hackpartner")
-db_pass = os.getenv("DARWINPUSH_DBPASS", "")
-db_name = os.getenv("DARWINPUSH_DBNAME", "darwin_push_db")
+db_url = os.getenv("DARWINPUSH_DB", None)
+if db_url is None:
+    print("Cannot start without DARWINPUSH_DB env variable.")
+    print("\t export DARWINPUSH_DB=\"postgresql://user:pass@host:5432/name\"")
+    sys.exit(1)
 
-db = PostgresqlDatabase(db_name, user=db_user, password=db_name)
+# db_user = os.getenv("DARWINPUSH_DBUSER", "hackpartner")
+# db_pass = os.getenv("DARWINPUSH_DBPASS", "")
+# db_name = os.getenv("DARWINPUSH_DBNAME", "darwin_push_db")
+
+db = connect(db_url)
