@@ -15,7 +15,7 @@ class MyListener(Listener):
 
     @db.transaction()
     def on_schedule_message(self, m):
-        print("^^^^^^^^^^^^ SCHEDULE!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        print("Schedule message: ", m.uid, m.rid, m.start_date)
 
         # We try to find a schedule, and replace it if we do
         found = (Schedule
@@ -70,16 +70,12 @@ class MyListener(Listener):
             p.type = str(type(o))
             p.save()
 
-        pass
-
-
     @db.transaction()
     def on_deactivated_message(self, message):
         print("^^^^^^^^^^^^ DEACTIVATED!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
         d = DeactivatedSchedule()
         d.rid = message.rid
         d.save()
-        pass
 
     @db.transaction()
     def on_association_message(self, message):
@@ -157,7 +153,6 @@ class MyListener(Listener):
         t.crs = message.crs
         t.platform = message.platform
         t.save()
-        pass
 
     @db.transaction()
     def on_train_status_message(self, message):
@@ -229,7 +224,6 @@ class MyListener(Listener):
             l.public_departure = location.public_departure_time
             l.length = location.length
             l.save()
-        pass
 
 def build_assoc_svc(assoc_svc):
     a = AssociationService()
