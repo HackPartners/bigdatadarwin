@@ -265,7 +265,6 @@ class HPClient(Client):
         self.reconnect(retries=0, delay=10) # try to reconnect forever
 
 if __name__ == "__main__":
-    create_all_tables()
 
     # Instantiate the Push Port client.
     client = HPClient(os.environ["STOMP_USER"],
