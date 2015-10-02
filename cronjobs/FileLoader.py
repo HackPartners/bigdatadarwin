@@ -1,7 +1,7 @@
 import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from models import Schedule
+from models import Schedule, CallingPoint
 from darwinpush.messagefactories.xml import ScheduleXMLMessageFactory
 import darwinpush.xb.pushport as pp
 
@@ -30,15 +30,21 @@ class ScheduleFileLoader:
                 journey_buffer.append(line)
                 journey_string = "".join(journey_buffer)
                 journey_string = journey_string.replace("Journey", "schedule")
-                journey_string = journey_string.replace("OR", "ns2:OR")
-                journey_string = journey_string.replace("PP", "ns2:PP")
-                journey_string = journey_string.replace("IP", "ns2:IP")
-                journey_string = journey_string.replace("DT", "ns2:DT")
-                journey_string = journey_string.replace("OPOR", "ns2:OPOR")
-                journey_string = journey_string.replace("OPIP", "ns2:OPIP")
-                journey_string = journey_string.replace("OPDT", "ns2:OPDT")
-                journey_string = journey_string.replace("OPPP", "ns2:OPPP")
+                journey_string = journey_string.replace("<OR", "<ns2:OR")
+                journey_string = journey_string.replace("<PP", "<ns2:PP")
+                journey_string = journey_string.replace("<IP", "<ns2:IP")
+                journey_string = journey_string.replace("<DT", "<ns2:DT")
+                journey_string = journey_string.replace("<OPOR", "<ns2:OPOR")
+                journey_string = journey_string.replace("<OPIP", "<ns2:OPIP")
+                journey_string = journey_string.replace("<OPDT", "<ns2:OPDT")
+                journey_string = journey_string.replace("<OPPP", "<ns2:OPPP")
+                journey_string = journey_string.replace("cancelReason", "ns2:cancelReason")
                 journey_string = re.sub(r'plat=\".+\"', '', journey_string)                
+                journey_string = re.sub(r'qtrain=\".+\"', '', journey_string)                
+                journey_string = re.sub(r'can=\".+\"', '', journey_string)                
+
+                print "\n\n\n\n ========================== NEW JOURNEY ========================="
+                print journey_string
 
                 journey_string = (  '<?xml version="1.0" encoding="UTF-8"?>'
                                     + '<Pport ts="2015-07-20T11:52:07.3487919+01:00" version="12.0" xmlns="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/Schedules/v1">'
@@ -46,8 +52,6 @@ class ScheduleFileLoader:
                                     + journey_string
                                     + '</uR>'
                                     + '</Pport>')
-
-                print journey_string
 
                 self.add_schedule_from_buffer(journey_string)
                 
@@ -58,13 +62,12 @@ class ScheduleFileLoader:
                 journey_buffer.append(line)
 
     def add_schedule_from_buffer(self, journey_buffer):
-        print journey_buffer
         r = pp.CreateFromDocument(journey_buffer)
         assert(None is r.sR)
         assert(None is not r.uR)
         assert(1 == len(r.uR.schedule))
 
-        m = ScheduleXMLMessageFactory.build(r.uR.schedule[0], r, x)
+        m = ScheduleXMLMessageFactory.build(r.uR.schedule[0], r, journey_buffer)
 
         # We try to find a schedule, and replace it if we do
         found = (Schedule
@@ -101,8 +104,7 @@ class ScheduleFileLoader:
         s.cancel_tiploc = m.cancel_reason_tiploc
         s.cancel_code = m.cancel_reason_code
         s.cancel_near = m.cancel_reason_near
-        # s.save()
-        print s
+        s.save()
 
         for o in m.all_points:
             p = CallingPoint()
@@ -118,7 +120,7 @@ class ScheduleFileLoader:
             p.public_arrival = o.raw_public_arrival_time
             p.public_departure = o.raw_public_departure_time
             p.type = str(type(o))
-            # p.save()
+            p.save()
 
 
 if __name__ == "__main__":
