@@ -1,11 +1,11 @@
 arnold==0.4.0
-hp-darwinpush==0.0.1
+hp-darwinpush==0.0.3
 peewee==2.6.3
 psycopg2==2.6.1
 py==1.4.30
-pytest==2.7.3
+pytest==2.8.1
 python-dateutil==2.4.2
-pytz==2015.4
+pytz==2015.6
 PyXB==1.2.4
 six==1.9.0
 stomp.py==4.1.5

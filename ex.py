@@ -71,14 +71,14 @@ class MyListener(Listener):
             p.save()
 
     @db.transaction()
-    def on_deactivated_message(self, message):
+    def on_deactivated_message(self, message, source):
         print("^^^^^^^^^^^^ DEACTIVATED!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
         d = DeactivatedSchedule()
         d.rid = message.rid
         d.save()
 
     @db.transaction()
-    def on_association_message(self, message):
+    def on_association_message(self, message, source):
         print("^^^^^^^^^^^^ ASSOCIATION!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
         main_svc = build_assoc_svc(message.main_service)
         assoc_svc = build_assoc_svc(message.associated_service)
@@ -95,7 +95,7 @@ class MyListener(Listener):
         a.save()
 
     @db.transaction()
-    def on_alarm_message(self, message):
+    def on_alarm_message(self, message, source):
         print("^^^^^^^^^^^^ ALARM!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
         a = Alarm()
         a.action = message.alarm_action
@@ -103,7 +103,7 @@ class MyListener(Listener):
         a.aid = a.aid
         a.save()
 
-    def on_station_message(self, message):
+    def on_station_message(self, message, source):
         print("^^^^^^^^^^^^ STATION!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
         s = Station()
         s.stations = message.stations
@@ -115,15 +115,15 @@ class MyListener(Listener):
         s.save()
 
     @db.transaction()
-    def on_tracking_id_message(self, message):
+    def on_tracking_id_message(self, message, source):
         print("^^^^^^^^^^^^ TRACKING ID!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 
     @db.transaction()
-    def on_train_alert_message(self, message):
+    def on_train_alert_message(self, message, source):
         print("^^^^^^^^^^^^ ALERT!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 
     @db.transaction()
-    def on_train_order_message(self, message):
+    def on_train_order_message(self, message, source):
         print("^^^^^^^^^^^^ TRAIN ORDER!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 
         first = None
@@ -155,7 +155,7 @@ class MyListener(Listener):
         t.save()
 
     @db.transaction()
-    def on_train_status_message(self, message):
+    def on_train_status_message(self, message, source):
         print("^^^^^^^^^^^^ NEW TRAIN STATUS MESSAGE!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 
         late_reason = message.late_reason
