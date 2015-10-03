@@ -30,7 +30,7 @@ class Schedule(DarwinModel):
     cancel_code         = IntegerField(null=True)
     created             = DateTimeField(default=datetime.datetime.now)
 
-class ScheduleHistory(DarwinModel):
+class OriginalSchedule(DarwinModel):
     uid                 = CharField()
     rid                 = CharField()
     status              = CharField()
@@ -59,21 +59,6 @@ CALLING_POINT_TYPE = (
 
 class CallingPoint(DarwinModel):
     schedule            = ForeignKeyField(Schedule)
-    tiploc              = CharField()
-    activity_codes      = CharField(null=True)
-    false_tiploc        = CharField(null=True)
-    route_delay         = CharField(null=True)
-    type                = CharField(choices=CALLING_POINT_TYPE)
-    cancelled           = BooleanField()
-    working_arrival     = TimeField(null=True)
-    working_pass        = TimeField(null=True)
-    working_departure   = TimeField(null=True)
-    public_arrival      = TimeField(null=True)
-    public_departure    = TimeField(null=True)
-    created             = DateTimeField(default=datetime.datetime.now)
-
-class CallingPointHistory(DarwinModel):
-    schedule            = ForeignKeyField(ScheduleHistory)
     tiploc              = CharField()
     activity_codes      = CharField(null=True)
     false_tiploc        = CharField(null=True)

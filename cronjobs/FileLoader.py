@@ -1,7 +1,7 @@
 import os, sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from models import ScheduleHistory, CallingPointHistory
+from models import Schedule, CallingPoint
 from darwinpush.messagefactories.xml import ScheduleXMLMessageFactory
 import darwinpush.xb.pushport as pp
 
@@ -19,14 +19,14 @@ class ScheduleFileLoader:
         journey_buffer = []
 
         for line in open(self.file_location):
-
+            
             if '<Journey' in line:
                 assert(not collect_mode)
                 collect_mode=True
 
             elif '</Journey' in line:
                 assert(collect_mode)
-
+                
                 journey_buffer.append(line)
                 journey_string = "".join(journey_buffer)
                 journey_string = journey_string.replace("Journey", "schedule")
@@ -39,9 +39,12 @@ class ScheduleFileLoader:
                 journey_string = journey_string.replace("<OPDT", "<ns2:OPDT")
                 journey_string = journey_string.replace("<OPPP", "<ns2:OPPP")
                 journey_string = journey_string.replace("cancelReason", "ns2:cancelReason")
-                journey_string = re.sub(r'plat=\".+\"', '', journey_string)
-                journey_string = re.sub(r'qtrain=\".+\"', '', journey_string)
-                journey_string = re.sub(r'can=\".+\"', '', journey_string)
+                journey_string = re.sub(r'plat=\".+\"', '', journey_string)                
+                journey_string = re.sub(r'qtrain=\".+\"', '', journey_string)                
+                journey_string = re.sub(r'can=\".+\"', '', journey_string)                
+
+                print "\n\n\n\n ========================== NEW JOURNEY ========================="
+                print journey_string
 
                 journey_string = (  '<?xml version="1.0" encoding="UTF-8"?>'
                                     + '<Pport ts="2015-07-20T11:52:07.3487919+01:00" version="12.0" xmlns="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/Schedules/v1">'
@@ -51,7 +54,7 @@ class ScheduleFileLoader:
                                     + '</Pport>')
 
                 self.add_schedule_from_buffer(journey_string)
-
+                
                 journey_buffer = []
                 collect_mode=False
 
@@ -67,11 +70,11 @@ class ScheduleFileLoader:
         m = ScheduleXMLMessageFactory.build(r.uR.schedule[0], r, journey_buffer)
 
         # We try to find a schedule, and replace it if we do
-        found = (ScheduleHistory
+        found = (Schedule
                 .select()
                 .where(
-                    ScheduleHistory.uid == m.uid,
-                    ScheduleHistory.rid == m.rid
+                    Schedule.uid == m.uid,
+                    Schedule.rid == m.rid
                 ))
 
         count = found.count()
@@ -79,13 +82,15 @@ class ScheduleFileLoader:
             assert(count == 1)
             s = found[0]
 
+            print("Removing calling points")
+
             # Removing all relevant calling points
-            CallingPointHistory.delete().where(
-                CallingPointHistory.schedule == s
+            CallingPoint.delete().where(
+                CallingPoint.schedule == s
             ).execute()
 
         else:
-            s = ScheduleHistory()
+            s = Schedule()
             s.uid = m.uid
             s.rid = m.rid
 
@@ -102,7 +107,7 @@ class ScheduleFileLoader:
         s.save()
 
         for o in m.all_points:
-            p = CallingPointHistory()
+            p = CallingPoint()
             p.tiploc = o.tiploc
             p.schedule = s
             p.activity_codes = o.planned_activity_codes
@@ -119,9 +124,10 @@ class ScheduleFileLoader:
 
 
 if __name__ == "__main__":
-    if not sys.argv[1]:
-        print("Please pass the location of the file to be uploaded")
+    if len(sys.argv) < 2:
+        print("You must pass the name of the file as argument")
         exit()
+        
     s=ScheduleFileLoader(sys.argv[1])
     s.update_daily_schedules()
 
