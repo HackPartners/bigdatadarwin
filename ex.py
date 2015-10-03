@@ -7,6 +7,8 @@ from models import *
 import os
 import queue
 import time
+import pickle
+import datetime
 
 class MyListener(Listener):
     def __init__(self, q, quit):
@@ -14,8 +16,8 @@ class MyListener(Listener):
         super().__init__(q, quit)
 
     @db.transaction()
-    def on_schedule_message(self, m):
-        print("Schedule message: ", m.uid, m.rid, m.start_date)
+    def on_schedule_message(self, m, source):
+        print("Schedule message: ", source, m.uid, m.rid, m.start_date)
 
         # We try to find a schedule, and replace it if we do
         found = (Schedule
@@ -72,14 +74,14 @@ class MyListener(Listener):
 
     @db.transaction()
     def on_deactivated_message(self, message, source):
-        print("^^^^^^^^^^^^ DEACTIVATED!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        print("Deactivated message", source)
         d = DeactivatedSchedule()
         d.rid = message.rid
         d.save()
 
     @db.transaction()
     def on_association_message(self, message, source):
-        print("^^^^^^^^^^^^ ASSOCIATION!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        print("Association message", source)
         main_svc = build_assoc_svc(message.main_service)
         assoc_svc = build_assoc_svc(message.associated_service)
 
@@ -96,7 +98,7 @@ class MyListener(Listener):
 
     @db.transaction()
     def on_alarm_message(self, message, source):
-        print("^^^^^^^^^^^^ ALARM!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        print("Alarm message", source)
         a = Alarm()
         a.action = message.alarm_action
         a.type = message.alarm_type
@@ -104,7 +106,7 @@ class MyListener(Listener):
         a.save()
 
     def on_station_message(self, message, source):
-        print("^^^^^^^^^^^^ STATION!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        print("Station message", source)
         s = Station()
         s.stations = message.stations
         s.message = str(message.message)
@@ -116,15 +118,15 @@ class MyListener(Listener):
 
     @db.transaction()
     def on_tracking_id_message(self, message, source):
-        print("^^^^^^^^^^^^ TRACKING ID!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        print("Tracking ID message", source)
 
     @db.transaction()
     def on_train_alert_message(self, message, source):
-        print("^^^^^^^^^^^^ ALERT!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        print("Train alert message", source)
 
     @db.transaction()
     def on_train_order_message(self, message, source):
-        print("^^^^^^^^^^^^ TRAIN ORDER!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        print("Train order message", source)
 
         first = None
         second = None
@@ -156,7 +158,7 @@ class MyListener(Listener):
 
     @db.transaction()
     def on_train_status_message(self, message, source):
-        print("^^^^^^^^^^^^ NEW TRAIN STATUS MESSAGE!! ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+        print("Train status message", source)
 
         late_reason = message.late_reason
         lr = None
@@ -270,19 +272,38 @@ if __name__ == "__main__":
     client = HPClient(os.environ["STOMP_USER"],
                     os.environ["STOMP_PASS"],
                     os.environ["STOMP_QUEUE"],
-                    MyListener)
+                    MyListener,
+                    ftp_user = os.environ["FTP_USER"],
+                    ftp_passwd = os.environ["FTP_PASSWD"])
 
     # Disable default reconnection attempts of Client
     client.auto_retry = False
 
+    # Attempt to figure out downtime:
+    try:
+        with open("downtime.pickle", "rb") as f:
+            shutdown_at = pickle.load(f)
+            downtime = datetime.datetime.now() - shutdown_at
+    except:
+        print("Couldn't open downtime. Downloading all logs")
+        downtime = 3600*24*2 # 2 days, big enough for all logs
+
     # Connect the Push Port client.
-    client.connect()
+    client.connect(downtime)
 
     print("Connected")
     try:
         while True:
             time.sleep(1)
     except (KeyboardInterrupt, SystemExit):
+
+        print("Saving time of shutdown")
+        try:
+            with open("downtime.pickle", "wb") as f:
+                pickle.dump(datetime.datetime.now(), f)
+        except:
+            print("Couldn't save downtime.")
+
         print("Disconnecting client...")
         client.disconnect()
         print("Bye")
