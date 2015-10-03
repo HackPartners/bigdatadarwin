@@ -30,6 +30,23 @@ class Schedule(DarwinModel):
     cancel_code         = IntegerField(null=True)
     created             = DateTimeField(default=datetime.datetime.now)
 
+class OriginalSchedule(DarwinModel):
+    uid                 = CharField()
+    rid                 = CharField()
+    status              = CharField()
+    category            = CharField()
+    toc_code            = CharField(max_length=3)
+    headcode            = CharField()
+    cancel_tiploc       = CharField(null=True)
+    start_date          = DateField()
+    passenget_service   = BooleanField(null=True)
+    active              = BooleanField()
+    deleted             = BooleanField()
+    charter             = BooleanField(null=True)
+    cancel_near         = BooleanField(null=True)
+    cancel_code         = IntegerField(null=True)
+    created             = DateTimeField(default=datetime.datetime.now)
+
 CALLING_POINT_TYPE = (
   ('origin', 'Origin'),
   ('operational_origin', 'Operational Origin'),
