@@ -43,9 +43,6 @@ class ScheduleFileLoader:
                 journey_string = re.sub(r'qtrain=\".+\"', '', journey_string)                
                 journey_string = re.sub(r'can=\".+\"', '', journey_string)                
 
-                print "\n\n\n\n ========================== NEW JOURNEY ========================="
-                print journey_string
-
                 journey_string = (  '<?xml version="1.0" encoding="UTF-8"?>'
                                     + '<Pport ts="2015-07-20T11:52:07.3487919+01:00" version="12.0" xmlns="http://www.thalesgroup.com/rtti/PushPort/v12" xmlns:ns2="http://www.thalesgroup.com/rtti/PushPort/Schedules/v1">'
                                     + '<uR requestID="0000000000020608" requestSource="at09" updateOrigin="CIS">'
@@ -81,8 +78,6 @@ class ScheduleFileLoader:
         if count > 0:
             assert(count == 1)
             s = found[0]
-
-            print("Removing calling points")
 
             # Removing all relevant calling points
             CallingPoint.delete().where(
