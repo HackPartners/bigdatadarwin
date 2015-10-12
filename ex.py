@@ -73,47 +73,51 @@ class MyListener(Listener):
 
     @db.transaction()
     def on_deactivated_message(self, message, source):
-        # print("Deactivated message", source)
-        d = DeactivatedSchedule()
-        d.rid = message.rid
-        d.save()
+        # # print("Deactivated message", source)
+        # d = DeactivatedSchedule()
+        # d.rid = message.rid
+        # d.save()
+        pass
 
     @db.transaction()
     def on_association_message(self, message, source):
-        # print("Association message", source)
-        main_svc = build_assoc_svc(message.main_service)
-        assoc_svc = build_assoc_svc(message.associated_service)
+        # # print("Association message", source)
+        # main_svc = build_assoc_svc(message.main_service)
+        # assoc_svc = build_assoc_svc(message.associated_service)
 
-        main_svc.save()
-        assoc_svc.save()
+        # main_svc.save()
+        # assoc_svc.save()
 
-        a = Association()
-        a.main_service = main_svc
-        a.associated_service = assoc_svc
-        a.tiploc = message.tiploc
-        a.category = message.category
-        a.deleted = message.deleted
-        a.save()
+        # a = Association()
+        # a.main_service = main_svc
+        # a.associated_service = assoc_svc
+        # a.tiploc = message.tiploc
+        # a.category = message.category
+        # a.deleted = message.deleted
+        # a.save()
+        pass
 
     @db.transaction()
     def on_alarm_message(self, message, source):
-        # print("Alarm message", source)
-        a = Alarm()
-        a.action = message.alarm_action
-        a.type = message.alarm_type
-        a.aid = a.aid
-        a.save()
+        # # print("Alarm message", source)
+        # a = Alarm()
+        # a.action = message.alarm_action
+        # a.type = message.alarm_type
+        # a.aid = a.aid
+        # a.save()
+        pass
 
     def on_station_message(self, message, source):
-        # print("Station message", source)
-        s = Station()
-        s.stations = message.stations
-        s.message = str(message.message)
-        s.smid = message.smid
-        # TODO: Change to actual category and severity types
-        s.category = str(message.category)
-        s.severity = str(message.severity)
-        s.save()
+        # # print("Station message", source)
+        # s = Station()
+        # s.stations = message.stations
+        # s.message = str(message.message)
+        # s.smid = message.smid
+        # # TODO: Change to actual category and severity types
+        # s.category = str(message.category)
+        # s.severity = str(message.severity)
+        # s.save()
+        pass
 
     @db.transaction()
     def on_tracking_id_message(self, message, source):
@@ -127,106 +131,108 @@ class MyListener(Listener):
 
     @db.transaction()
     def on_train_order_message(self, message, source):
-        # print("Train order message", source)
+        # # print("Train order message", source)
 
-        first = None
-        second = None
-        third = None
+        # first = None
+        # second = None
+        # third = None
 
-        if message.first:
-            first = build_train_order_item(message.first)
-            first.save()
+        # if message.first:
+        #     first = build_train_order_item(message.first)
+        #     first.save()
 
-        if message.second:
-            second = build_train_order_item(message.second)
-            second.save()
+        # if message.second:
+        #     second = build_train_order_item(message.second)
+        #     second.save()
 
-        if message.third:
-            third = build_train_order_item(message.third)
-            third.save()
+        # if message.third:
+        #     third = build_train_order_item(message.third)
+        #     third.save()
 
 
-        t = TrainOrder()
-        t.first = first
-        t.second = second
-        t.third = third
-        # TODO: Change action to be set/clear
-        t.action = message.action
-        t.tiploc = message.tiploc
-        t.crs = message.crs
-        t.platform = message.platform
-        t.save()
+        # t = TrainOrder()
+        # t.first = first
+        # t.second = second
+        # t.third = third
+        # # TODO: Change action to be set/clear
+        # t.action = message.action
+        # t.tiploc = message.tiploc
+        # t.crs = message.crs
+        # t.platform = message.platform
+        # t.save()
+        pass
 
     @db.transaction()
     def on_train_status_message(self, message, source):
-        # print("Train status message", source)
+        # # print("Train status message", source)
 
-        late_reason = message.late_reason
-        lr = None
+        # late_reason = message.late_reason
+        # lr = None
 
-        if late_reason:
-            lr = LateReason()
-            lr.code = late_reason.code
-            lr.tiploc = late_reason.tiploc
-            lr.near = late_reason.near
-            lr.save()
+        # if late_reason:
+        #     lr = LateReason()
+        #     lr.code = late_reason.code
+        #     lr.tiploc = late_reason.tiploc
+        #     lr.near = late_reason.near
+        #     lr.save()
 
-        t = TrainStatus()
-        t.late_reason = lr
-        t.rid = message.rid
-        t.uid = message.uid
-        t.start = message.start_date
-        t.reverse_formation = message.reverse_formation
-        t.save()
+        # t = TrainStatus()
+        # t.late_reason = lr
+        # t.rid = message.rid
+        # t.uid = message.uid
+        # t.start = message.start_date
+        # t.reverse_formation = message.reverse_formation
+        # t.save()
 
-        for location in message.locations:
-            # Building forecasts
-            f_arrival = None
-            f_departure = None
-            f_pass = None
+        # for location in message.locations:
+        #     # Building forecasts
+        #     f_arrival = None
+        #     f_departure = None
+        #     f_pass = None
 
-            if location.forecast_arrival_time:
-                f_arrival = build_forecast(location.forecast_arrival_time)
-                f_arrival.save()
+        #     if location.forecast_arrival_time:
+        #         f_arrival = build_forecast(location.forecast_arrival_time)
+        #         f_arrival.save()
 
-            if location.forecast_departure_time:
-                f_departure = build_forecast(location.forecast_departure_time)
-                f_departure.save()
+        #     if location.forecast_departure_time:
+        #         f_departure = build_forecast(location.forecast_departure_time)
+        #         f_departure.save()
 
-            if location.forecast_pass_time:
-                f_pass = build_forecast(location.forecast_pass_time)
-                f_pass.save()
+        #     if location.forecast_pass_time:
+        #         f_pass = build_forecast(location.forecast_pass_time)
+        #         f_pass.save()
 
-            # Building platform
-            platform = location.platform
-            p = None
+        #     # Building platform
+        #     platform = location.platform
+        #     p = None
 
-            if platform:
-                p = Platform()
-                p.source = platform.source
-                p.suppressed = platform.suppressed
-                p.suppressed_by_cis = platform.suppressed_by_cis
-                p.confirmed = platform.confirmed
-                p.number = platform.number
-                p.save()
+        #     if platform:
+        #         p = Platform()
+        #         p.source = platform.source
+        #         p.suppressed = platform.suppressed
+        #         p.suppressed_by_cis = platform.suppressed_by_cis
+        #         p.confirmed = platform.confirmed
+        #         p.number = platform.number
+        #         p.save()
 
-            # Building location
-            l = Location()
-            l.train_status = t
-            l.platform = p
-            l.forecast_arrival = f_arrival
-            l.forecast_departure = f_departure
-            l.forecast_pass = f_pass
-            l.tiploc = location.tiploc
-            l.suppressed = location.suppressed
-            l.detach_front = location.detach_front
-            l.working_arrival = location.working_arrival_time
-            l.working_departure = location.working_departure_time
-            l.working_pass = location.working_pass_time
-            l.public_arrival = location.public_arrival_time
-            l.public_departure = location.public_departure_time
-            l.length = location.length
-            l.save()
+        #     # Building location
+        #     l = Location()
+        #     l.train_status = t
+        #     l.platform = p
+        #     l.forecast_arrival = f_arrival
+        #     l.forecast_departure = f_departure
+        #     l.forecast_pass = f_pass
+        #     l.tiploc = location.tiploc
+        #     l.suppressed = location.suppressed
+        #     l.detach_front = location.detach_front
+        #     l.working_arrival = location.working_arrival_time
+        #     l.working_departure = location.working_departure_time
+        #     l.working_pass = location.working_pass_time
+        #     l.public_arrival = location.public_arrival_time
+        #     l.public_departure = location.public_departure_time
+        #     l.length = location.length
+        #     l.save()
+        pass
 
 def build_assoc_svc(assoc_svc):
     a = AssociationService()
