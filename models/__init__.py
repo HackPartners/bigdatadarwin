@@ -14,25 +14,8 @@ class DarwinModel(Model):
 
 ########################################################################
 class Schedule(DarwinModel):
-    uid                 = CharField()
     rid                 = CharField()
-    status              = CharField()
-    category            = CharField()
-    toc_code            = CharField(max_length=3)
-    headcode            = CharField()
-    cancel_tiploc       = CharField(null=True)
-    start_date          = DateField()
-    passenget_service   = BooleanField(null=True)
-    active              = BooleanField()
-    deleted             = BooleanField()
-    charter             = BooleanField(null=True)
-    cancel_near         = BooleanField(null=True)
-    cancel_code         = IntegerField(null=True)
-    created             = DateTimeField(default=datetime.datetime.now)
-
-class OriginalSchedule(DarwinModel):
     uid                 = CharField()
-    rid                 = CharField()
     status              = CharField()
     category            = CharField()
     toc_code            = CharField(max_length=3)
@@ -64,13 +47,18 @@ class CallingPoint(DarwinModel):
     false_tiploc        = CharField(null=True)
     route_delay         = CharField(null=True)
     type                = CharField(choices=CALLING_POINT_TYPE)
+    late_code           = CharField(null=True)
     cancelled           = BooleanField()
     working_arrival     = TimeField(null=True)
     working_pass        = TimeField(null=True)
     working_departure   = TimeField(null=True)
+    actual_working_departure = TimeField(null=True)
     public_arrival      = TimeField(null=True)
     public_departure    = TimeField(null=True)
     created             = DateTimeField(default=datetime.datetime.now)
+
+
+
 
 ########################################################################
 class Forecast(DarwinModel):

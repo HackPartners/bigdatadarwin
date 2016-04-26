@@ -10,10 +10,13 @@ Currently, the following are in use (with the default values):
     export STOMP_PASS="" # no default
     export STOMP_QUEUE="" # no default
 
+    # ALL OF THESE ARE THE DEFAULT. Override them using the export:
     export DARWINPUSH_DBHOST="localhost" 
     export DARWINPUSH_DBUSER="hackpartner"
-    export DARWINPUSH_DBPASS=""
+    export DARWINPUSH_DBPASS="password"
     export DARWINPUSH_DBNAME="darwin_push_db"
+    export DARWINPUSH_DBHOST="localhost"
+    export DARWINPUSH_DBPORT="5432"
 
     #  These are made to default to the values set
     # for the production environment at the moment:
@@ -21,6 +24,10 @@ Currently, the following are in use (with the default values):
     export TEST_DARWINPUSH_DBUSER=""
     export TEST_DARWINPUSH_DBPASS=""
     export TEST_DARWINPUSH_DBNAME=""
+
+    # THIS IS IMPORTANT 
+    # You need the path to pg_config to run venv
+    export PATH=/path/to/compiled/postgresql/bin:"$PATH"
 
 ## Migrations
 

@@ -9,14 +9,12 @@ import os
 from playhouse.db_url import connect
 import sys
 
-db_url = os.getenv("DARWINPUSH_DB", None)
-if db_url is None:
-    print("Cannot start without DARWINPUSH_DB env variable.")
-    print("\t export DARWINPUSH_DB=\"postgresql://user:pass@host:5432/name\"")
-    sys.exit(1)
+db_user = os.getenv("DARWINPUSH_DBUSER", "hackpartner")
+db_pass = os.getenv("DARWINPUSH_DBPASS", "password")
+db_name = os.getenv("DARWINPUSH_DBNAME", "darwin_push_db")
+db_host = os.getenv("DARWINPUSH_DBHOST", "localhost")
+db_port = os.getenv("DARWINPUSH_DBPORT", "5432")
 
-# db_user = os.getenv("DARWINPUSH_DBUSER", "hackpartner")
-# db_pass = os.getenv("DARWINPUSH_DBPASS", "")
-# db_name = os.getenv("DARWINPUSH_DBNAME", "darwin_push_db")
+db_url = ("postgresql" + "://" + db_user + ":" + db_pass + "@" + db_host + ":" + db_port + "/" + db_name)
 
 db = connect(db_url)

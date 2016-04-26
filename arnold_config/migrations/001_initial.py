@@ -50,13 +50,17 @@ class CallingPoint(DarwinModel):
     false_tiploc        = CharField(null=True)
     route_delay         = CharField(null=True)
     type                = CharField(choices=CALLING_POINT_TYPE)
+    late_code           = CharField(null=True)
     cancelled           = BooleanField()
     working_arrival     = TimeField(null=True)
     working_pass        = TimeField(null=True)
     working_departure   = TimeField(null=True)
+    actual_working_departure = TimeField(null=True)
     public_arrival      = TimeField(null=True)
     public_departure    = TimeField(null=True)
     created             = DateTimeField(default=datetime.datetime.now)
+
+
 
 ########################################################################
 class Forecast(DarwinModel):
