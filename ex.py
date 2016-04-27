@@ -41,7 +41,6 @@ class MyListener(Listener):
             return # TODO: Update calling points 
 
         else:
-            print("ADDING SCHEDULEEEEEEE")
             s = Schedule()
             s.uid = m.uid
             s.rid = m.rid
